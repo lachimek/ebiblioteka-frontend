@@ -1,0 +1,45 @@
+import axios from "axios";
+import { StoreType } from "store";
+
+let store: StoreType;
+export const injectStore = (_store: StoreType) => {
+    store = _store;
+};
+
+export const api = axios.create({
+    baseURL: "http://localhost:3001/api",
+    withCredentials: true,
+});
+
+api.interceptors.request.use((config) => {
+    config!.headers!.authorization = `Bearer ${store.getState().loginStore.token}`;
+    return config;
+});
+
+export enum API_ROUTES {
+    //books routes
+    ADD_BOOK = "/v1/book/add",
+    GET_BOOK_ALL = "/v1/book/all",
+    GET_BOOK_ONE = "/v1/book",
+    DELETE_BOOK = "/v1/book/delete",
+
+    //lang routes
+    ADD_LANG = "/v1/lang/add",
+    GET_LANG_ONE = "/v1/lang",
+    GET_LANG_ALL = "/v1/lang/all",
+
+    //author routes
+    ADD_AUTHOR = "/v1/author/add",
+    GET_AUTHOR_ONE = "/v1/author",
+    GET_AUTHOR_ALL = "/v1/author/all",
+
+    //publisher routes
+    ADD_PUBLISHER = "/v1/publisher/add",
+    GET_PUBLISHER_ONE = "/v1/publisher",
+    GET_PUBLISHER_ALL = "/v1/publisher/all",
+
+    //genre routes
+    ADD_GENRE = "/v1/genre/add",
+    GET_GENRE_ONE = "/v1/genre",
+    GET_GENRE_ALL = "/v1/genre/all",
+}
