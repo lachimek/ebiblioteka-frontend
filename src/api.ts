@@ -42,4 +42,13 @@ export enum API_ROUTES {
     ADD_GENRE = "/v1/genre/add",
     GET_GENRE_ONE = "/v1/genre",
     GET_GENRE_ALL = "/v1/genre/all",
+
+    //group routes
+    ADD_GROUP = "/v1/group/add",
+    GET_GROUP_ONE = "/v1/group",
+    GET_GROUP_ALL = "/v1/group/all",
+
+    //user routes
+    GET_STUDENT_ALL = "/v1/user/member/all",
+    GET_STUDENT_ONE = "/v1/user/member",
 }

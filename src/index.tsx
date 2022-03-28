@@ -21,6 +21,7 @@ import BooksAddPage from "./pages/BooksPage/BooksAddPage/BooksAddPage";
 import BooksListPage from "./pages/BooksPage/BooksListPage/BooksListPage";
 import { injectStore } from "api";
 import MembersAddPage from "pages/MembersPage/MembersAddPage/MembersAddPage";
+import MembersListPage from "pages/MembersPage/MembersListPage/MembersListPage";
 
 injectStore(store);
 
@@ -40,6 +41,7 @@ ReactDOM.render(
                         <Route path="/members" element={<MembersPage />} />
                         <Route path="/members/add" element={<MembersAddPage />} />
                         <Route path="/members/edit" element={<MembersAddPage edit={true} />} />
+                        <Route path="/members/list" element={<MembersListPage />} />
                         <Route path="/issues" element={<IssuesPage />} />
                         <Route path="/returns" element={<ReturnsPage />} />
                         <Route path="/requests" element={<RequestsPage />} />

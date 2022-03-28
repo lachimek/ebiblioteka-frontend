@@ -2,21 +2,22 @@ import BooksTable from "components/BooksTable/BooksTable";
 import { StyledButton } from "components/BooksTable/BooksTableStyles";
 import { IAuthor, IBook, IGenre, IPublisher } from "interfaces/IBook";
 import IBooksTableData from "interfaces/IBooksTableData";
+import Multiselect from "multiselect-react-dropdown";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { tableSearchMultiple } from "utils/TableSearchMultiple";
 import { Paginize } from "utils/Paginize";
 import { PaginationButton, SearchContainer, SearchInput, SearchSelect } from "./BooksListPageStyles";
-import { fetchAllBooks, listBookSelector, deleteBook } from "./BooksListSlice";
+import { fetchAllBooks, listBookSelector, deleteBook, fetchAllGenres } from "./BooksListSlice";
 import DeleteModal from "./DeleteModal";
 import DetailsModal from "./DetailsModal";
 
 export default function BooksListPage() {
     const dispatch = useDispatch();
-    const { error, loading, loadingDelete, books } = useSelector(listBookSelector);
+    const { error, loading, loadingDelete, books, genres } = useSelector(listBookSelector);
     const navigate = useNavigate();
-    const [currentPage, setCurrentPage] = useState<number>(0);
     const [paginizedData, setPaginizedData] = useState<Array<any>>([]);
 
     const [details, setDetails] = useState<IBook>();
@@ -27,9 +28,12 @@ export default function BooksListPage() {
 
     const [searchString, setSearchString] = useState<string>("");
     const [searchColumn, setSearchColumn] = useState<string>("");
+    const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+    const [available, setAvailable] = useState<string>("yes");
 
     useEffect(() => {
         dispatch(fetchAllBooks());
+        dispatch(fetchAllGenres());
     }, []);
 
     useEffect(() => {
@@ -38,7 +42,8 @@ export default function BooksListPage() {
 
     useEffect(() => {
         const tableData = convertDataToTable();
-        setPaginizedData(Paginize(tableData, 10));
+        setPaginizedData(tableData);
+        //setPaginizedData(Paginize(tableData, 10));
     }, [books]);
 
     useEffect(() => {
@@ -68,14 +73,6 @@ export default function BooksListPage() {
         return tableData;
     }
 
-    function nextPage() {
-        if (currentPage + 1 <= paginizedData.length - 1) setCurrentPage(currentPage + 1);
-    }
-
-    function prevPage() {
-        if (currentPage - 1 >= 0) setCurrentPage(currentPage - 1);
-    }
-
     function detailsModal(id: string) {
         setDetails(books.filter((book) => book.id === id)[0]);
         setShowModal(true);
@@ -91,9 +88,9 @@ export default function BooksListPage() {
     }
 
     function availableToBoolean(text: string): boolean {
-        if (text.toLocaleLowerCase() === "tak") return true;
-        else if (text.toLocaleLowerCase() === "false") return true;
-        else return false;
+        if (text.toLocaleLowerCase() === "yes") return true;
+        if (text.toLocaleLowerCase() === "no") return false;
+        return false;
     }
 
     function handleSearch(clear: boolean = false) {
@@ -101,9 +98,10 @@ export default function BooksListPage() {
         if (clear) {
             setSearchColumn("");
             setSearchString("");
-            setPaginizedData(Paginize(tableData, 10));
+            setPaginizedData(tableData);
             return;
         }
+        console.log("selected", selectedGenres);
 
         let filteredData = tableData.filter((row) => {
             switch (searchColumn) {
@@ -112,11 +110,12 @@ export default function BooksListPage() {
                 case "title":
                     return row.title.match(new RegExp(searchString, "i"));
                 case "author":
+                    console.log("author", row.author.match(new RegExp(searchString, "i")));
                     return row.author.match(new RegExp(searchString, "i"));
                 case "genre":
-                    return row.genre.join(" ").match(new RegExp(searchString, "i"));
+                    return tableSearchMultiple(row.genre, selectedGenres);
                 case "available":
-                    return row.available === availableToBoolean(searchString);
+                    return row.available === availableToBoolean(available);
                 case "description":
                     return row.description.match(new RegExp(searchString, "i"));
                 case "":
@@ -126,10 +125,9 @@ export default function BooksListPage() {
             }
         });
 
-        console.log({ filteredData, searchString, searchColumn });
+        //console.log({ filteredData, searchString, searchColumn });
 
-        setCurrentPage(0);
-        setPaginizedData(Paginize(filteredData, 10));
+        setPaginizedData(filteredData);
     }
 
     function handleDelete(id: string) {
@@ -138,26 +136,63 @@ export default function BooksListPage() {
         setShowDeleteModal(false);
     }
 
+    function inputType(s: string) {
+        if (s === "genre") {
+            return (
+                <Multiselect
+                    options={genres}
+                    isObject={false}
+                    showArrow
+                    selectionLimit={5}
+                    placeholder="Wybierz"
+                    customCloseIcon={<span style={{ paddingLeft: "4px", cursor: "pointer" }}>&#10005;</span>}
+                    style={{
+                        chips: {
+                            background: "#ff9e0d",
+                            color: "black",
+                            margin: 0,
+                            marginRight: "5px",
+                        },
+                    }}
+                    onSelect={(selectedList: any) => setSelectedGenres(selectedList)}
+                    onRemove={(selectedList: any) => setSelectedGenres(selectedList)}
+                />
+            );
+        }
+        if (s === "available") {
+            return (
+                <SearchSelect required value={available} onChange={(e) => setAvailable(e.currentTarget.value)}>
+                    <option value="yes">TAK</option>
+                    <option value="no">NIE</option>
+                </SearchSelect>
+            );
+        }
+        return (
+            <SearchInput
+                type="text"
+                placeholder="Szukana fraza"
+                value={searchString}
+                onChange={(e) => setSearchString(e.currentTarget.value)}
+                required
+            />
+        );
+    }
+
     return (
         <div style={{ width: "1200px" }}>
             <SearchContainer>
                 <StyledButton onClick={() => navigate("/books")} style={{ marginRight: "auto" }}>
                     Powrót
                 </StyledButton>
-                <SearchInput
-                    type="text"
-                    placeholder="Szukana fraza"
-                    value={searchString}
-                    onChange={(e) => setSearchString(e.currentTarget.value)}
-                    required
-                />
+                {inputType(searchColumn)}
+
                 <SearchSelect required value={searchColumn} onChange={(e) => setSearchColumn(e.currentTarget.value)}>
                     <option value="">- Wybierz kategorię -</option>
                     <option value="isbn">ISBN</option>
                     <option value="title">Tytuł</option>
                     <option value="author">Autor</option>
                     <option value="genre">Gatunek</option>
-                    <option value="available">Dostępne (tak/nie)</option>
+                    <option value="available">Dostępne?</option>
                     <option value="description">Opis</option>
                 </SearchSelect>
                 <StyledButton onClick={() => handleSearch()}>Szukaj</StyledButton>
@@ -174,10 +209,10 @@ export default function BooksListPage() {
             />
             {loading ? (
                 <div>Loading...</div>
-            ) : paginizedData[currentPage] ? (
+            ) : paginizedData ? (
                 <div>
                     <BooksTable
-                        tableData={paginizedData[currentPage]}
+                        tableData={paginizedData}
                         detailsFn={detailsModal}
                         deleteFn={deleteModal}
                         editFn={editRedirect}
@@ -186,17 +221,6 @@ export default function BooksListPage() {
             ) : (
                 <div>Brak danych</div>
             )}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "10px" }}>
-                <PaginationButton type="button" onClick={prevPage} disabled={currentPage === 0}>
-                    &lt;
-                </PaginationButton>
-                <span>
-                    Strona {currentPage + 1} z {paginizedData.length}
-                </span>
-                <PaginationButton type="button" onClick={nextPage} disabled={currentPage === paginizedData.length - 1}>
-                    &gt;
-                </PaginationButton>
-            </div>
         </div>
     );
 }

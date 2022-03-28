@@ -9,3 +9,18 @@ body {
 input:focus {
     outline: none !important;
 }
+
+.multiselect-container li:hover {
+    background: #ff9e0d !important;
+    color: #fff;
+    cursor: pointer;
+}
+
+.highlightOption {
+    background: #fff !important;
+    color: #000 !important;
+}
+
+.highlightOption:hover {
+    color: #fff !important;
+}

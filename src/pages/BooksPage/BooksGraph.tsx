@@ -8,7 +8,7 @@ import {
     Tooltip,
     Legend,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -54,7 +54,7 @@ export const data = {
 };
 
 function BooksGraph() {
-    return <Line options={options} data={data} height={300} width={1200} />;
+    return <Bar options={options} data={data} height={300} width={1200} />;
 }
 
 export default BooksGraph;

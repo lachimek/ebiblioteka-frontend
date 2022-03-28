@@ -60,7 +60,7 @@ const Navbar = React.memo(function Navbar() {
                 <NavItem>
                     <MemberIcon {...iconProps("members")} fill={activeFill("members")} />
                     <NavLink to={"/members"} active={isActive("members")}>
-                        Członkowie
+                        Uczniowie
                     </NavLink>
                 </NavItem>
                 <NavItem>

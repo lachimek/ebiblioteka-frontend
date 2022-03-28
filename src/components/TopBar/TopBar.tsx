@@ -1,4 +1,3 @@
-import { Icon } from "../Icon/Icon";
 import { SessionTime, TopBarContainer, UserInfo } from "./TopBarStyles";
 import { ReactComponent as LogoutIcon } from "../../images/power-off.svg";
 import { ReactComponent as RefreshIcon } from "../../images/undo.svg";
@@ -13,6 +12,7 @@ const TopBar = React.memo(function TopBar() {
     const dispatch = useDispatch();
     const [timeLeft, setTimeLeft] = useState<string>("09:59");
     const [deg, setDeg] = useState<number>(0);
+    const alertSoundURL = "http://ba.la.free.fr/DOOM/alarm_02.wav";
 
     const handleLogout = (expired: boolean) => {
         if (expired) {
@@ -44,6 +44,11 @@ const TopBar = React.memo(function TopBar() {
             let minuteF = "0" + minute;
             let secondF = "0" + second;
 
+            if (minute === 1 && second < 1) {
+                new Audio(alertSoundURL).play();
+                toast.error("Sesja wygaśnie za 1 minutę.");
+            }
+
             setTimeLeft(`${minuteF.slice(-2)}:${secondF.slice(-2)}`);
         }, 1000);
 
@@ -65,7 +70,7 @@ const TopBar = React.memo(function TopBar() {
             </SessionTime>
             <UserInfo>
                 <span>
-                    {user?.firstName} {user?.lastName}
+                    {user?.userDetails.firstName} {user?.userDetails.lastName}
                 </span>
                 <LogoutIcon
                     fill="#435058"

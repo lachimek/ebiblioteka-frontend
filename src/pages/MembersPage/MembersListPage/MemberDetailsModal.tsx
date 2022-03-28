@@ -1,5 +1,4 @@
-import { IAuthor, IBook, IGenre, ILanguage, IPublisher } from "interfaces/IBook";
-import toast from "react-hot-toast";
+import IMember from "interfaces/IMember";
 import styled from "styled-components";
 
 const ModalBlur = styled.div`
@@ -53,20 +52,20 @@ const ModalContent = styled.div`
     }
 `;
 
-function DetailsModal({
+function MemberDetailsModal({
     details,
     showModal,
     setShowModal,
 }: {
-    details: IBook | null;
+    details: IMember | null;
     showModal: boolean;
     setShowModal: Function;
 }) {
     return showModal && details ? (
         <ModalBlur onClick={() => setShowModal(false)}>
-            <ModalContainer onClick={(e) => e.stopPropagation()}>
+            <ModalContainer onClick={(e: any) => e.stopPropagation()}>
                 <ModalHeader>
-                    <span>Szczegóły książki</span>
+                    <span>Szczegóły ucznia</span>
                     <span
                         onClick={() => setShowModal(false)}
                         style={{ float: "right", fontSize: "32px", cursor: "pointer" }}
@@ -76,44 +75,36 @@ function DetailsModal({
                 </ModalHeader>
                 <ModalContent>
                     <div>
-                        <span>ISBN: </span>
-                        <span
-                            onClick={() => {
-                                navigator.clipboard.writeText(details.isbn);
-                                toast.success("Skopiowano ISBN do schowka");
-                            }}
-                            style={{ cursor: "pointer" }}
-                        >
-                            {details.isbn} 📋
+                        <span>Imię i nazwisko:</span>
+                        <span>
+                            {details.firstName} {details.lastName}
                         </span>
                     </div>
                     <div>
-                        <span>Tytuł: </span>
-                        <span>{details.title}</span>
+                        <span>Klasa:</span>
+                        <span>{details.groupName}</span>
                     </div>
                     <div>
-                        <span>Autor: </span>
-                        <span>{(details.author as IAuthor).name}</span>
+                        <span>Ilość wypożyczonych książek:</span>
+                        <span>{details.issuanceCount}</span>
                     </div>
                     <div>
-                        <span>Wydawnictwo: </span>
-                        <span>{(details.publisher as IPublisher).name}</span>
+                        <span>Email:</span>
+                        <span>{details.email}</span>
                     </div>
                     <div>
-                        <span>Data wydania: </span>
-                        <span>{details.publicationDate.split("T")[0]}</span>
+                        <span>Telefon:</span>
+                        <span>{details.phone}</span>
                     </div>
                     <div>
-                        <span>Język: </span>
-                        <span>{(details.language as ILanguage).language}</span>
+                        <span>Miasto:</span>
+                        <span>
+                            {details.city} {details.postalCode}
+                        </span>
                     </div>
                     <div>
-                        <span>Gatunki: </span>
-                        <span>{details.genres.map((g) => (g as IGenre).name + " ")}</span>
-                    </div>
-                    <div>
-                        <span>Opis: </span>
-                        <span style={{ maxWidth: "70%", textAlign: "justify" }}>{details.description}</span>
+                        <span>Ulica i Nr. domu:</span>
+                        <span>{details.streetAddress}</span>
                     </div>
                 </ModalContent>
             </ModalContainer>
@@ -121,4 +112,4 @@ function DetailsModal({
     ) : null;
 }
 
-export default DetailsModal;
+export default MemberDetailsModal;

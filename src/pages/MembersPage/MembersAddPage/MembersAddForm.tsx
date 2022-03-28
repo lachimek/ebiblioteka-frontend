@@ -9,6 +9,7 @@ import { Form, Input, Select } from "react-formik-ui";
 import styled from "styled-components";
 import { FormButton } from "components/FormButton/FormButton";
 import LoaderSpin from "components/LoaderSpin/LoaderSpin";
+import { addMemberSelector, fetchGroups } from "./MembersAddSlice";
 
 const FormGroup = styled.div`
     display: flex;
@@ -66,7 +67,14 @@ const FormInputSelect = styled(Select)`
 `;
 
 function MembersAddForm({ edit }: { edit?: Boolean }) {
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { groups } = useSelector(addMemberSelector);
+
+    useEffect(() => {
+        dispatch(fetchGroups());
+    }, []);
+
     const [submitting, setSubmitting] = useState(false);
     const initialValues: IMembersFormData = {
         email: "",
@@ -78,16 +86,6 @@ function MembersAddForm({ edit }: { edit?: Boolean }) {
         postalCode: "",
         streetAddress: "",
     };
-
-    const groupOptions = [
-        { value: "init", label: "brak" },
-        { value: "1asdf", label: "1a" },
-        { value: "1bsdf", label: "1b" },
-        { value: "1csdf", label: "1c" },
-        { value: "2asdf", label: "2a" },
-        { value: "2bsdf", label: "2b" },
-        { value: "2csdf", label: "2c" },
-    ];
 
     const validationSchema = Yup.object().shape({
         email: Yup.string().required("E-mail jest wymagany.").email("Niepoprawny E-mail."),
@@ -133,7 +131,7 @@ function MembersAddForm({ edit }: { edit?: Boolean }) {
                             <FormInputSelect
                                 name="groupId"
                                 label="Wybór klasy:"
-                                options={groupOptions}
+                                options={groups}
                                 style={{ marginLeft: "1em" }}
                             />
                             <FormInput type="text" name="phone" placeholder="Telefon kontaktowy"></FormInput>

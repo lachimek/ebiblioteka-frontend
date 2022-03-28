@@ -1,20 +1,20 @@
 import IBooksTableData from "interfaces/IBooksTableData";
+import IMember from "interfaces/IMember";
+import IMembersTableData from "interfaces/IMembersTableData";
 import { PaginationButton } from "pages/BooksPage/BooksListPage/BooksListPageStyles";
 import React from "react";
 import { useTable, Column, useSortBy, usePagination } from "react-table";
-import { StyledTable, StyledButton } from "./BooksTableStyles";
+import { StyledTable, StyledButton } from "./MembersTableStyles";
 
 function Table({
     columns,
     data,
     detailsFn,
-    deleteFn,
     editFn,
 }: {
     columns: any;
     data: any[];
     detailsFn: Function;
-    deleteFn: Function;
     editFn: Function;
 }) {
     const {
@@ -81,13 +81,7 @@ function Table({
                                                 >
                                                     Szczegóły
                                                 </StyledButton>
-                                                <StyledButton
-                                                    onClick={() => editFn(cell.value)}
-                                                    style={{ marginRight: "8px" }}
-                                                >
-                                                    Edytuj
-                                                </StyledButton>
-                                                <StyledButton onClick={() => deleteFn(cell.value)}>Usuń</StyledButton>
+                                                <StyledButton onClick={() => editFn(cell.value)}>Edytuj</StyledButton>
                                             </td>
                                         );
                                     else return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
@@ -112,17 +106,7 @@ function Table({
     );
 }
 
-function BooksTable({
-    tableData,
-    detailsFn,
-    deleteFn,
-    editFn,
-}: {
-    tableData: IBooksTableData[];
-    detailsFn: Function;
-    deleteFn: Function;
-    editFn: Function;
-}) {
+function BooksTable({ tableData, detailsFn, editFn }: { tableData: IMember[]; detailsFn: Function; editFn: Function }) {
     const columns = React.useMemo(
         () => [
             {
@@ -130,24 +114,24 @@ function BooksTable({
                 accessor: "lp",
             },
             {
-                Header: "ISBN",
-                accessor: "isbn",
+                Header: "Imię",
+                accessor: "firstName",
             },
             {
-                Header: "Tytuł",
-                accessor: "title",
+                Header: "Nazwisko",
+                accessor: "lastName",
             },
             {
-                Header: "Autor",
-                accessor: "author",
+                Header: "Telefon",
+                accessor: "phone",
             },
             {
-                Header: "Gatunek",
-                accessor: "genre",
+                Header: "Klasa",
+                accessor: "groupName",
             },
             {
-                Header: "Dostępne?",
-                accessor: "available",
+                Header: "Ilość wypożyczonych książek",
+                accessor: "issuanceCount",
             },
             {
                 Header: "Akcje",
@@ -157,7 +141,7 @@ function BooksTable({
         []
     );
 
-    return <Table columns={columns} data={tableData} detailsFn={detailsFn} deleteFn={deleteFn} editFn={editFn} />;
+    return <Table columns={columns} data={tableData} detailsFn={detailsFn} editFn={editFn} />;
 }
 
 export default BooksTable;

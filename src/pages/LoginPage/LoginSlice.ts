@@ -21,6 +21,10 @@ export interface ILoginState {
 interface IUser {
     id: string;
     login: string;
+    userDetails: IUserDetails;
+}
+
+interface IUserDetails {
     firstName: string;
     lastName: string;
 }
@@ -82,6 +86,7 @@ export const loginUser = ({ login, password }: ILoginProps): AppThunk => {
                 login: login,
                 password: password,
             });
+            console.log(response.data);
             dispatch(setUser(response.data.token));
             dispatch(setLoading(false));
             console.log(response);

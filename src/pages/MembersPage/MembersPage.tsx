@@ -8,7 +8,7 @@ export default function MembersPage() {
     let navigate = useNavigate();
 
     return (
-        <div>
+        <div style={{ width: "80%" }}>
             <ButtonContainer>
                 <Button onClick={() => navigate("add")}>Dodaj ucznia</Button>
                 <Button onClick={() => navigate("list")}>Lista uczniów</Button>

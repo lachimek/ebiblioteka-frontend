@@ -32,6 +32,7 @@ export const SearchInput = styled.input`
     font-size: 18px;
     padding: 3px 0px 3px 3px;
     z-index: 1;
+    min-width: 220px;
 
     &:focus {
         background-color: #e5e5e5d3;
@@ -49,6 +50,7 @@ export const SearchSelect = styled.select`
     font-size: 18px;
     padding: 3px 0px 3px 3px;
     z-index: 1;
+    min-width: 220px;
 
     &:focus {
         background-color: #e5e5e5d3;
