@@ -8,19 +8,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import MemberDetailsModal from "./MemberDetailsModal";
 import { fetchAllMembers, listMemberSelector } from "./MemberListSlice";
+import { fetchGroups, addMemberSelector } from "../MembersAddPage/MembersAddSlice";
+import Multiselect from "multiselect-react-dropdown";
 
 function MembersListPage() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { error, loading, members } = useSelector(listMemberSelector);
+    const { groups } = useSelector(addMemberSelector);
 
     const [details, setDetails] = useState<IMember>();
     const [showModal, setShowModal] = useState<boolean>(false);
 
     const [paginizedData, setPaginizedData] = useState<Array<any>>([]);
 
+    const [searchColumn, setSearchColumn] = useState<string>("");
+    const [searchString, setSearchString] = useState<string>("");
+    const [searchGroups, setSearchGroups] = useState<string[]>([]);
+
     useEffect(() => {
         dispatch(fetchAllMembers());
+        dispatch(fetchGroups());
     }, [dispatch]);
 
     useEffect(() => {
@@ -46,6 +54,72 @@ function MembersListPage() {
         navigate("/members/edit/" + id);
     }
 
+    function handleSearch(clear: boolean = false) {
+        const tableDataWithLp = members.map((item, i) => {
+            return { lp: i + 1, ...item };
+        });
+        if (clear) {
+            setSearchColumn("");
+            setSearchString("");
+            setPaginizedData(tableDataWithLp);
+            return;
+        }
+
+        let filteredData = tableDataWithLp.filter((row) => {
+            switch (searchColumn) {
+                case "name":
+                    return (row.firstName.toLowerCase() + " " + row.lastName.toLowerCase()).includes(
+                        searchString.toLowerCase()
+                    );
+                case "group":
+                    return searchGroups.includes(row.groupName);
+                case "":
+                    return tableDataWithLp;
+                default:
+                    return tableDataWithLp;
+            }
+        });
+
+        //console.log({ filteredData, searchString, searchColumn });
+
+        setPaginizedData(filteredData);
+    }
+
+    function inputType(s: string) {
+        if (s === "group") {
+            const filteredGroups = groups.filter((g) => g.label !== "brak");
+            return (
+                <Multiselect
+                    options={filteredGroups.map((groups) => groups.label)}
+                    isObject={false}
+                    showArrow
+                    selectionLimit={5}
+                    placeholder="Wybierz"
+                    customCloseIcon={<span style={{ paddingLeft: "4px", cursor: "pointer" }}>&#10005;</span>}
+                    style={{
+                        chips: {
+                            background: "#ff9e0d",
+                            color: "black",
+                            margin: 0,
+                            marginRight: "5px",
+                        },
+                    }}
+                    onSelect={(selectedList: any) => setSearchGroups(selectedList)}
+                    onRemove={(selectedList: any) => setSearchGroups(selectedList)}
+                />
+            );
+        }
+        return (
+            <SearchInput
+                type="text"
+                placeholder="Szukana fraza"
+                value={searchString}
+                onChange={(e) => setSearchString(e.currentTarget.value)}
+                required
+            />
+        );
+    }
+
     return (
         <div style={{ width: "1200px" }}>
             <SearchContainer>
@@ -53,15 +127,17 @@ function MembersListPage() {
                     Powrót
                 </StyledButton>
 
-                <SearchInput type="text" placeholder="Szukana fraza" required />
+                {inputType(searchColumn)}
 
-                <SearchSelect required>
+                <SearchSelect value={searchColumn} onChange={(e) => setSearchColumn(e.currentTarget.value)} required>
                     <option value="">- Wybierz kategorię -</option>
                     <option value="name">Imię i nazwisko</option>
-                    <option value="klasa">Klasa</option>
+                    <option value="group">Klasa</option>
                 </SearchSelect>
-                <StyledButton>Szukaj</StyledButton>
-                <StyledButton style={{ marginLeft: "8px" }}>Wyczyść</StyledButton>
+                <StyledButton onClick={() => handleSearch()}>Szukaj</StyledButton>
+                <StyledButton onClick={() => handleSearch(true)} style={{ marginLeft: "8px" }}>
+                    Wyczyść
+                </StyledButton>
             </SearchContainer>
             <MemberDetailsModal details={details || null} showModal={showModal} setShowModal={setShowModal} />
             {loading ? (

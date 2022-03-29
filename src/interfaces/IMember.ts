@@ -8,5 +8,6 @@ export default interface IMember {
     postalCode: string;
     streetAddress: string;
     groupName: string;
+    groupId: string;
     issuanceCount: number;
 }

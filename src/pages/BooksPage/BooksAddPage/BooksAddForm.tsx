@@ -67,6 +67,7 @@ function BooksAddForm({ edit }: { edit?: Boolean }) {
     const [autofillLanguages, setAutofillLanguages] = useState<Array<string>>([]);
     const [autofillGenres, setAutofillGenres] = useState<Array<string>>([]);
     const [fetchingISBN, setFetchingISBN] = useState(false);
+    const [formFilled, setFormFilled] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
@@ -108,26 +109,29 @@ function BooksAddForm({ edit }: { edit?: Boolean }) {
     const FetchByISBN = () => {
         const formikContext = useFormikContext();
         useEffect(() => {
-            if (errorISBN === "Book not found") {
-                toast.error("Nie znaleziono książki w bazie danych");
-                formikContext.resetForm();
-            }
-            if (book != null) {
-                formikContext.setFieldValue("isbn", book.isbn);
-                formikContext.setFieldValue("title", book.title);
-                formikContext.setFieldValue("author", book.author);
-                formikContext.setFieldValue("publisher", book.publisher);
-                formikContext.setFieldValue("publicationDate", book.publicationDate.split("T")[0]);
-                formikContext.setFieldValue("language", book.language);
-                formikContext.setFieldValue("genre", book.genre);
-                formikContext.setFieldValue("description", book.description);
+            if (!formFilled) {
+                if (errorISBN === "Book not found") {
+                    toast.error("Nie znaleziono książki w bazie danych");
+                    formikContext.resetForm();
+                }
+                if (book != null) {
+                    formikContext.setFieldValue("isbn", book.isbn);
+                    formikContext.setFieldValue("title", book.title);
+                    formikContext.setFieldValue("author", book.author);
+                    formikContext.setFieldValue("publisher", book.publisher);
+                    formikContext.setFieldValue("publicationDate", book.publicationDate.split("T")[0]);
+                    formikContext.setFieldValue("language", book.language);
+                    formikContext.setFieldValue("genre", book.genre);
+                    formikContext.setFieldValue("description", book.description);
+                    setFormFilled(true);
+                }
+                console.log("setting fields");
             }
         }, [errorISBN, book]);
 
         useEffect(() => {
             formikContext.setFieldValue("idField", id);
-            console.log(id);
-        }, []);
+        }, [id]);
         return null;
     };
 
@@ -230,25 +234,28 @@ function BooksAddForm({ edit }: { edit?: Boolean }) {
                                                                 marginRight: "5px",
                                                             }}
                                                             type="button"
-                                                            onClick={() => arrayHelpers.remove(index)} // remove a friend from the list
+                                                            onClick={() => arrayHelpers.remove(index)}
                                                         >
                                                             -
                                                         </button>
-                                                        <button
-                                                            style={{ marginBottom: "10px" }}
-                                                            type="button"
-                                                            onClick={() => {
-                                                                if (values.genre.length < 5)
-                                                                    setAutofillGenres(
-                                                                        autofillGenres.filter(
-                                                                            (item) => !values.genre.includes(item)
-                                                                        )
-                                                                    );
-                                                                arrayHelpers.insert(index, "");
-                                                            }} // insert an empty string at a position
-                                                        >
-                                                            +
-                                                        </button>
+                                                        {index === 0 ? (
+                                                            <button
+                                                                style={{ marginBottom: "10px" }}
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    if (values.genre.length < 5) {
+                                                                        setAutofillGenres(
+                                                                            autofillGenres.filter(
+                                                                                (item) => !values.genre.includes(item)
+                                                                            )
+                                                                        );
+                                                                        arrayHelpers.insert(index, "");
+                                                                    }
+                                                                }} // insert an empty string at a position
+                                                            >
+                                                                +
+                                                            </button>
+                                                        ) : null}
                                                     </div>
                                                 </div>
                                             ))

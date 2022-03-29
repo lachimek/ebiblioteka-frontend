@@ -1,4 +1,5 @@
 export default interface IMembersFormData {
+    idField: string | null;
     email: string;
     firstName: string;
     lastName: string;

@@ -203,15 +203,6 @@ export const fetchBookById = (id: string): AppThunkAddBook => {
     };
 };
 
-// isbn: string;
-// title: string;
-// author: string;
-// publisher: string;
-// publicationDate: string;
-// language: string;
-// genre: string[];
-// description: string;
-
 export const {
     setLoading,
     setError,

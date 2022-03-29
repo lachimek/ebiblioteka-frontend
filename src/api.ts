@@ -51,4 +51,5 @@ export enum API_ROUTES {
     //user routes
     GET_STUDENT_ALL = "/v1/user/member/all",
     GET_STUDENT_ONE = "/v1/user/member",
+    REGISTER_USER = "/v1/auth/register",
 }

@@ -54,7 +54,7 @@ function MembersAddPage({ edit }: { edit?: Boolean }) {
                 {edit ? <span>Edycja ucznia</span> : <span>Dodawanie nowego ucznia</span>}
             </AddBookCardHeader>
             <AddBookCardFormContainer>
-                <MembersAddForm />
+                <MembersAddForm edit={edit} />
             </AddBookCardFormContainer>
         </AddBookCard>
     );

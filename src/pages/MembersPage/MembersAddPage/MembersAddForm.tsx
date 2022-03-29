@@ -4,12 +4,12 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import IMembersFormData from "interfaces/IMembersFormData";
-import { Formik } from "formik";
+import { Formik, useFormikContext } from "formik";
 import { Form, Input, Select } from "react-formik-ui";
 import styled from "styled-components";
 import { FormButton } from "components/FormButton/FormButton";
 import LoaderSpin from "components/LoaderSpin/LoaderSpin";
-import { addMemberSelector, fetchGroups } from "./MembersAddSlice";
+import { addMemberSelector, fetchGroups, fetchMemberById, registerMember, resetState } from "./MembersAddSlice";
 
 const FormGroup = styled.div`
     display: flex;
@@ -69,14 +69,36 @@ const FormInputSelect = styled(Select)`
 function MembersAddForm({ edit }: { edit?: Boolean }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { groups } = useSelector(addMemberSelector);
+    const { id } = useParams();
+    const { groups, member, memberId, error, loading } = useSelector(addMemberSelector);
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         dispatch(fetchGroups());
+        if (id) {
+            dispatch(fetchMemberById(id));
+        }
+
+        return () => {
+            dispatch(resetState());
+        };
     }, []);
 
-    const [submitting, setSubmitting] = useState(false);
+    useEffect(() => {
+        setSubmitting(loading);
+        if (memberId !== null && memberId !== "") {
+            //dispatch(setBookId(""));
+            if (edit) {
+                toast.success("Uczeń edytowany pomyślnie.");
+                navigate("/members/list");
+            } else {
+                toast.success("Uczeń dodany pomyślnie.");
+            }
+        }
+    }, [loading]);
+
     const initialValues: IMembersFormData = {
+        idField: "",
         email: "",
         firstName: "",
         lastName: "",
@@ -101,22 +123,53 @@ function MembersAddForm({ edit }: { edit?: Boolean }) {
         streetAddress: Yup.string().required("Adres jest wymagany."),
     });
 
+    const FillFieldsForEdit = () => {
+        const formikContext = useFormikContext();
+        useEffect(() => {
+            if (error === "Member not found") {
+                toast.error("Nie znaleziono ucznia w bazie danych");
+                formikContext.resetForm();
+            }
+            if (member != null) {
+                formikContext.setFieldValue("email", member.email);
+                formikContext.setFieldValue("firstName", member.firstName);
+                formikContext.setFieldValue("lastName", member.lastName);
+                formikContext.setFieldValue("groupId", member.groupId);
+                formikContext.setFieldValue("phone", member.phone);
+                formikContext.setFieldValue("city", member.city);
+                formikContext.setFieldValue("postalCode", member.postalCode);
+                formikContext.setFieldValue("streetAddress", member.streetAddress);
+            }
+        }, [error, member]);
+
+        useEffect(() => {
+            formikContext.setFieldValue("idField", id);
+        }, []);
+        return null;
+    };
+
+    const submitButtonText = edit ? "Edytuj ucznia" : "Dodaj ucznia";
+
     return (
         <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={(props: IMembersFormData) => {
-                setSubmitting(true);
-                console.log({ ...props });
-                setTimeout(() => {
-                    setSubmitting(false);
-                    toast.success("Uczeń dodany pomyślnie.");
-                }, 1000);
+                dispatch(registerMember(props));
+                console.log("formdata", props);
+                // setSubmitting(true);
+                // console.log({ ...props });
+                // setTimeout(() => {
+                //     setSubmitting(false);
+                //     toast.success("Uczeń dodany pomyślnie.");
+                // }, 1000);
             }}
         >
             {({ values }) => (
                 <Form styling="structure">
                     <FormGroup>
+                        <FormInput type="hidden" name="idField" />
+                        <FillFieldsForEdit />
                         <FormGroupRow>
                             <FormInput type="text" name="firstName" placeholder="Imię"></FormInput>
                             <FormInput type="text" name="lastName" placeholder="Nazwisko"></FormInput>
@@ -158,7 +211,7 @@ function MembersAddForm({ edit }: { edit?: Boolean }) {
                                 Powrót
                             </FormButton>
                             <FormButton type="submit" disabled={submitting}>
-                                {submitting ? <LoaderSpin height={11} width={11} /> : "Dodaj ucznia"}
+                                {submitting ? <LoaderSpin height={11} width={11} /> : submitButtonText}
                             </FormButton>
                         </FormGroupRow>
                     </FormGroup>

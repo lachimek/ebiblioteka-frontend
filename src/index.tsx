@@ -40,7 +40,7 @@ ReactDOM.render(
                         <Route path="/books/list" element={<BooksListPage />} />
                         <Route path="/members" element={<MembersPage />} />
                         <Route path="/members/add" element={<MembersAddPage />} />
-                        <Route path="/members/edit" element={<MembersAddPage edit={true} />} />
+                        <Route path="/members/edit/:id" element={<MembersAddPage edit={true} />} />
                         <Route path="/members/list" element={<MembersListPage />} />
                         <Route path="/issues" element={<IssuesPage />} />
                         <Route path="/returns" element={<ReturnsPage />} />

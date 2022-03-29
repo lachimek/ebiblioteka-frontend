@@ -3,9 +3,11 @@ import { AppThunkAddMember } from "store";
 import { api, API_ROUTES } from "api";
 import { AxiosError } from "axios";
 import IMember from "interfaces/IMember";
+import IMembersFormData from "interfaces/IMembersFormData";
 
 export interface IAddMemberState {
-    member: IMember | {};
+    member: IMember | null;
+    memberId: string;
     groups: { value: string; label: string }[];
     loading: boolean;
     loadingDelete: boolean;
@@ -13,7 +15,8 @@ export interface IAddMemberState {
 }
 
 const initialState: IAddMemberState = {
-    member: {},
+    member: null,
+    memberId: "",
     groups: [{ value: "init", label: "brak" }],
     loading: false,
     loadingDelete: false,
@@ -37,9 +40,16 @@ const addMemberSlice = createSlice({
             state.error = null;
         },
 
+        setMemberId: (state, { payload }: PayloadAction<string>) => {
+            state.memberId = payload;
+            state.error = null;
+        },
+
         setError: (state, { payload }: PayloadAction<string>) => {
             state.error = payload;
         },
+
+        resetState: (state) => initialState,
     },
 });
 
@@ -70,17 +80,45 @@ export const fetchMemberById = (id: string): AppThunkAddMember => {
         try {
             const {
                 data: { member },
-            } = await api.get(`${API_ROUTES.GET_STUDENT_ONE}/?id=${id}`);
-            if (!member) throw "Member not found";
+            } = await api.get(`${API_ROUTES.GET_STUDENT_ONE}?id=${id}`);
+            console.log(member);
+
+            //if (!member) throw "Member not found";
             dispatch(setMember(member));
         } catch (err: Error | AxiosError | any) {
-            console.clear();
+            console.log(err);
             dispatch(setError("Member not found"));
         }
     };
 };
 
-export const { setLoading, setError, setMember, setGroups } = addMemberSlice.actions;
+export const registerMember = (member: IMembersFormData): AppThunkAddMember => {
+    return async (dispatch) => {
+        dispatch(setLoading(true));
+        try {
+            const { data } = await api.post(`${API_ROUTES.REGISTER_USER}`, {
+                id: member.idField,
+                firstName: member.firstName,
+                lastName: member.lastName,
+                email: member.email,
+                phone: member.phone,
+                city: member.city,
+                postalCode: member.postalCode,
+                streetAddress: member.streetAddress,
+                groupId: member.groupId,
+            });
+            dispatch(setMemberId(data.member.id));
+            dispatch(setLoading(false));
+            console.log(data);
+        } catch (err: Error | AxiosError | any) {
+            console.log(err);
+            dispatch(setLoading(false));
+            dispatch(setError("Member not added"));
+        }
+    };
+};
+
+export const { setLoading, setError, setMember, setMemberId, setGroups, resetState } = addMemberSlice.actions;
 
 export const addMemberSelector = (state: { addMemberStore: IAddMemberState }) => state.addMemberStore;
 
