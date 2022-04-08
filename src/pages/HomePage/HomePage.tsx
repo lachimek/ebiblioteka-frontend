@@ -1,17 +1,13 @@
 import { Card, CardHeader, InfoCardsContainer } from "components/Card/Card";
 import { GraphContainer } from "pages/BooksPage/BooksPageStyles";
 import React from "react";
-import DailyIssuesGraph from "./DailyIssuesGraph";
 import { HorizontalGraph } from "./HorizontalGraph";
 
 export default function HomePage() {
     return (
-        <div>
+        <div style={{ width: "80%" }}>
             <GraphContainer style={{ marginTop: 0 }}>
                 <HorizontalGraph />
-            </GraphContainer>
-            <GraphContainer>
-                <DailyIssuesGraph />
             </GraphContainer>
             <InfoCardsContainer>
                 <Card>
