@@ -12,6 +12,7 @@ import IIssuesFormData from "interfaces/IIssuesFormData";
 import { fetchAllMembers, listMemberSelector } from "pages/MembersPage/MembersListPage/MemberListSlice";
 import { fetchAllBooks, listBookSelector } from "pages/BooksPage/BooksListPage/BooksListSlice";
 import { IAuthor } from "interfaces/IBook";
+import { addIssue, addIssueSelector, resetState } from "./IssuesAddSlice";
 
 const FormGroup = styled.div`
     display: flex;
@@ -75,11 +76,16 @@ function MembersAddForm() {
     const [submitting, setSubmitting] = useState(false);
     const { members, loading: membersLoading } = useSelector(listMemberSelector);
     const { books, loading: booksLoading } = useSelector(listBookSelector);
+    const { error, loading: issueLoading, issueId } = useSelector(addIssueSelector);
 
     const [scannedIds, setScannedIds] = useState<{ memberId: string; bookId: string }>({ memberId: "", bookId: "" });
 
-    const [membersForSelect, setMembersForSelect] = useState<{ value: string; label: string }[]>([]);
-    const [booksForSelect, setBooksForSelect] = useState<{ value: string; label: string }[]>([]);
+    const [membersForSelect, setMembersForSelect] = useState<{ value: string; label: string }[]>([
+        { value: "", label: "" },
+    ]);
+    const [booksForSelect, setBooksForSelect] = useState<{ value: string; label: string }[]>([
+        { value: "", label: "" },
+    ]);
 
     useEffect(() => {
         dispatch(fetchAllMembers());
@@ -88,6 +94,7 @@ function MembersAddForm() {
         return () => {
             setMembersForSelect([]);
             setBooksForSelect([]);
+            dispatch(resetState());
         };
     }, []);
 
@@ -127,6 +134,7 @@ function MembersAddForm() {
 
     const convertMembersToSelect = () => {
         setMembersForSelect([]);
+        setScannedIds({ memberId: "", bookId: "" });
         members.forEach((member) => {
             setMembersForSelect((prev) => {
                 return [
@@ -139,20 +147,23 @@ function MembersAddForm() {
 
     const convertBooksToSelect = () => {
         setBooksForSelect([]);
+        setScannedIds({ memberId: "", bookId: "" });
         books.forEach((book) => {
-            setBooksForSelect((prev) => {
-                return [
-                    ...prev!,
-                    { value: book.id!, label: `${book.isbn} ${book.title} ${(book.author as IAuthor).name}` },
-                ];
-            });
+            if (book.available) {
+                setBooksForSelect((prev) => {
+                    return [
+                        ...prev!,
+                        { value: book.id!, label: `${book.isbn} ${book.title} ${(book.author as IAuthor).name}` },
+                    ];
+                });
+            }
         });
     };
 
     const FillFieldsFromScan = () => {
         const formikContext = useFormikContext();
         useEffect(() => {
-            if (scannedIds != null) {
+            if (scannedIds !== { memberId: "", bookId: "" }) {
                 formikContext.setFieldValue("memberId", scannedIds.memberId);
                 formikContext.setFieldValue("bookId", scannedIds.bookId);
             }
@@ -161,37 +172,30 @@ function MembersAddForm() {
         return null;
     };
 
-    // useEffect(() => {
-    //     dispatch(fetchGroups());
-
-    //     return () => {
-    //         dispatch(resetState());
-    //     };
-    // }, []);
-
-    // useEffect(() => {
-    //     setSubmitting(loading);
-    //     if (memberId !== null && memberId !== "") {
-    //         //dispatch(setBookId(""));
-    //         if (edit) {
-    //             toast.success("Uczeń edytowany pomyślnie.");
-    //             navigate("/members/list");
-    //         } else {
-    //             toast.success("Uczeń dodany pomyślnie.");
-    //         }
-    //     }
-    // }, [loading]);
+    useEffect(() => {
+        setSubmitting(issueLoading);
+        if (error) {
+            toast.error("Błąd dodawania wypożyczenia.");
+        } else if (issueId && issueId !== "") {
+            navigate("/issues/list");
+            toast.success("Wypożyczenie dodane pomyślnie.");
+        }
+    }, [issueLoading]);
 
     const initialValues: IIssuesFormData = {
-        memberId: "",
-        bookId: "",
+        memberId: "init",
+        bookId: "init",
         issueStart: new Date().toISOString().split("T")[0],
         issueEnd: "",
     };
 
     const validationSchema = Yup.object().shape({
-        memberId: Yup.string().required("Wybór ucznia jest wymagany.").notOneOf([""], "Wybór ucznia jest wymagany22."),
-        bookId: Yup.string().required("Wybór książki jest wymagany.").notOneOf([""], "Wybór książki jest wymagany22."),
+        memberId: Yup.string()
+            .required("Wybór ucznia jest wymagany.")
+            .notOneOf(["init"], "Wybór ucznia jest wymagany."),
+        bookId: Yup.string()
+            .required("Wybór książki jest wymagany.")
+            .notOneOf(["init"], "Wybór książki jest wymagany."),
         issueStart: Yup.date().required("Data wypożyczenia jest wymagana."),
         issueEnd: Yup.date().required("Data zwrotu jest wymagana."),
     });
@@ -203,8 +207,7 @@ function MembersAddForm() {
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={(props: IIssuesFormData) => {
-                //dispatch(registerMember(props));
-                console.log("formdata", props);
+                dispatch(addIssue(props)); //858c6d58-e479-474d-87cd-0e97fa2b28d8
             }}
         >
             {(props) => (
@@ -222,6 +225,7 @@ function MembersAddForm() {
                                         props.setFieldValue("memberId", e.currentTarget.value)
                                     }
                                 >
+                                    {!scannedIds.memberId && <option value="init">-- Wybierz ucznia --</option>}
                                     {membersForSelect.map((member) => {
                                         return (
                                             <option key={member.value} value={member.value}>
@@ -248,6 +252,9 @@ function MembersAddForm() {
                                 </FormButton>
                             </div>
                         </FormGroupRow>
+                        {props.touched.memberId && (
+                            <span style={{ fontSize: "10px", color: "red" }}>{props.errors.memberId}</span>
+                        )}
                         <FormGroupRow style={{ marginTop: "1em" }}>
                             <div style={{ width: "80%" }}>
                                 <label>Wybór książki:</label>
@@ -259,6 +266,7 @@ function MembersAddForm() {
                                         props.setFieldValue("bookId", e.currentTarget.value)
                                     }
                                 >
+                                    {!scannedIds.bookId && <option value="init">-- Wybierz książkę --</option>}
                                     {booksForSelect.map((book) => {
                                         return (
                                             <option key={book.value} value={book.value}>
@@ -268,6 +276,7 @@ function MembersAddForm() {
                                     })}
                                 </FormInputSelect>
                             </div>
+
                             <div style={{ display: "flex", width: "40%", justifyContent: "flex-end" }}>
                                 <FormButton
                                     type="button"
@@ -285,6 +294,9 @@ function MembersAddForm() {
                                 </FormButton>
                             </div>
                         </FormGroupRow>
+                        {props.touched.memberId && (
+                            <span style={{ fontSize: "10px", color: "red" }}>{props.errors.bookId}</span>
+                        )}
                         <FormGroupRow style={{ marginTop: "2em", marginBottom: "2em" }}>
                             <FormInput type="date" name="issueStart" hint="Data wypożyczenia"></FormInput>
                             <FormInput type="date" name="issueEnd" hint="Data zwrotu"></FormInput>

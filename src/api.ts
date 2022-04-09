@@ -52,4 +52,9 @@ export enum API_ROUTES {
     GET_STUDENT_ALL = "/v1/user/member/all",
     GET_STUDENT_ONE = "/v1/user/member",
     REGISTER_USER = "/v1/auth/register",
+
+    //issue routes
+    ADD_ISSUE = "/v1/issue/add",
+    GET_ISSUE_ONE = "/v1/issue",
+    GET_ISSUE_ALL = "/v1/issue/all",
 }

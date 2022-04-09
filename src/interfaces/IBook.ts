@@ -7,6 +7,7 @@ export interface IBook {
     language: ILanguage | string;
     publisher: IPublisher | string;
     genres: IGenre[] | string[];
+    available: boolean;
     description: string;
 }
 

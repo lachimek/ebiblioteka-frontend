@@ -65,7 +65,7 @@ export default function BooksListPage() {
                 author: (book.author as IAuthor).name,
                 genre: curGenres,
                 isbn: book.isbn,
-                available: true,
+                available: book.available,
                 description: book.description,
             };
         });

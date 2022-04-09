@@ -163,6 +163,7 @@ function BooksAddForm({ edit }: { edit?: Boolean }) {
                         language,
                         genres: genre,
                         description,
+                        available: true,
                     })
                 );
                 console.log({
