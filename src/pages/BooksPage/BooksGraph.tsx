@@ -26,34 +26,57 @@ export const options = {
     },
 };
 
-const labels = [
-    ["Styczeń", "2022"],
-    ["Luty", "2022"],
-    ["Marzec", "2022"],
-    ["Kwiecień", "2022"],
-    ["Maj", "2022"],
-    ["Czerwiec", "2022"],
-    ["Lipiec", "2022"],
-    ["Sierpień", "2022"],
-    ["Wrzesień", "2022"],
-    ["Październik", "2022"],
-    ["Listopad", "2022"],
-    ["Grudzień", "2022"],
-];
+// const labels = [
+//     ["Styczeń", "2022"],
+//     ["Luty", "2022"],
+//     ["Marzec", "2022"],
+//     ["Kwiecień", "2022"],
+//     ["Maj", "2022"],
+//     ["Czerwiec", "2022"],
+//     ["Lipiec", "2022"],
+//     ["Sierpień", "2022"],
+//     ["Wrzesień", "2022"],
+//     ["Październik", "2022"],
+//     ["Listopad", "2022"],
+//     ["Grudzień", "2022"],
+// ];
 
-export const data = {
-    labels,
-    datasets: [
-        {
-            label: "Ilość książek",
-            data: [50, 75, 120, 168, 250, 300, 320, 315, 300, 350, 370, 390],
-            borderColor: "#ff9e0d",
-            backgroundColor: "#ff9e0dcf",
-        },
-    ],
-};
+// export const data = {
+//     labels,
+//     datasets: [
+//         {
+//             label: "Ilość książek",
+//             data: [50, 75, 120, 168, 250, 300, 320, 315, 300, 350, 370, 390],
+//             borderColor: "#ff9e0d",
+//             backgroundColor: "#ff9e0dcf",
+//         },
+//     ],
+// };
+interface GraphData {
+    month: [];
+    value: number;
+}
 
-function BooksGraph() {
+function BooksGraph({ graphData }: { graphData: GraphData[] }) {
+    let labels: any = [];
+    let dataNumbers: number[] = [];
+
+    graphData.forEach((one) => {
+        labels.push(one.month);
+        dataNumbers.push(one.value);
+    });
+
+    const data = {
+        labels,
+        datasets: [
+            {
+                label: "Ilość książek",
+                data: dataNumbers,
+                borderColor: "#ff9e0d",
+                backgroundColor: "#ff9e0dcf",
+            },
+        ],
+    };
     return <Bar options={options} data={data} height={300} width={1200} />;
 }
 
