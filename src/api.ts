@@ -60,4 +60,5 @@ export enum API_ROUTES {
 
     //stats routes
     GET_BOOKS_PAGE_STATS = "/v1/stats/books",
+    GET_MEMBERS_PAGE_STATS = "/v1/stats/members",
 }

@@ -1,11 +1,36 @@
+import { api, API_ROUTES } from "api";
 import { Card, CardHeader, InfoCardsContainer } from "components/Card/Card";
 import { ButtonContainer, Button, GraphContainer } from "pages/BooksPage/BooksPageStyles";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import MembersGraph from "./MembersGraph";
+import GroupsGraph, { GroupsGraphData } from "./GroupsGraph";
+
+interface Stats {
+    membersCount: number;
+    groupsCount: number;
+    bestGroup: { value: number; group: string };
+    graphData: GroupsGraphData[];
+}
 
 export default function MembersPage() {
     let navigate = useNavigate();
+
+    const [stats, setStats] = useState<Stats>({
+        membersCount: 0,
+        groupsCount: 0,
+        bestGroup: { value: 0, group: "..." },
+        graphData: [{ group: "", value: 0 }],
+    });
+
+    useEffect(() => {
+        async function fetchAPI() {
+            const { data } = await api.get(API_ROUTES.GET_MEMBERS_PAGE_STATS);
+            setStats(data.info);
+            console.log(data.info);
+        }
+
+        fetchAPI();
+    }, []);
 
     return (
         <div style={{ width: "80%" }}>
@@ -14,19 +39,19 @@ export default function MembersPage() {
                 <Button onClick={() => navigate("list")}>Lista uczniów</Button>
             </ButtonContainer>
             <GraphContainer>
-                <MembersGraph />
+                <GroupsGraph graphData={stats.graphData} />
             </GraphContainer>
             <InfoCardsContainer>
                 <Card>
-                    <CardHeader>189</CardHeader>
+                    <CardHeader>{stats.membersCount}</CardHeader>
                     <span>Zarejestrowani uczniowie</span>
                 </Card>
                 <Card>
-                    <CardHeader>18</CardHeader>
+                    <CardHeader>{stats.groupsCount}</CardHeader>
                     <span>Ilość klas w systemie</span>
                 </Card>
                 <Card>
-                    <CardHeader>3b</CardHeader>
+                    <CardHeader>{stats.bestGroup.group}</CardHeader>
                     <span>Najlepsza klasa</span>
                 </Card>
             </InfoCardsContainer>
