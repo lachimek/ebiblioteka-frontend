@@ -34,8 +34,7 @@ export const NavItem = styled.div`
 
 export const NavLink = styled(Link)<{ active: Boolean }>`
     text-decoration: none;
-    color: ${(props) =>
-        props.active ? NavLinkState.active : NavLinkState.inactive};
+    color: ${(props) => (props.active ? NavLinkState.active : NavLinkState.inactive)};
     text-transform: uppercase;
     font-size: 20px;
     width: fit-content;

@@ -14,12 +14,12 @@ export default function BooksPage() {
         graphData: [],
     });
 
-    useEffect(() => {
-        async function fetchAPI() {
-            const { data } = await api.get(API_ROUTES.GET_BOOKS_PAGE_STATS);
-            setStats(data.info);
-        }
+    async function fetchAPI() {
+        const { data } = await api.get(API_ROUTES.GET_BOOKS_PAGE_STATS);
+        setStats(data.info);
+    }
 
+    useEffect(() => {
         fetchAPI();
     }, []);
 
