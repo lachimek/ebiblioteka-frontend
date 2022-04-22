@@ -115,6 +115,12 @@ function DetailsModal({
                         <span>Opis: </span>
                         <span style={{ maxWidth: "70%", textAlign: "justify" }}>{details.description}</span>
                     </div>
+                    <div>
+                        <span>Data zwrotu: </span>
+                        <span>
+                            {details.issueHistory.filter((issue) => !issue.returned)[0].returnDate.split("T")[0]}
+                        </span>
+                    </div>
                 </ModalContent>
             </ModalContainer>
         </ModalBlur>

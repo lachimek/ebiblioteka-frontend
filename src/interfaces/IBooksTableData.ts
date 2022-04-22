@@ -1,3 +1,5 @@
+import { IIssueHistory } from "./IBook";
+
 export default interface IBooksTableData {
     id: string;
     lp: number;
@@ -7,4 +9,5 @@ export default interface IBooksTableData {
     isbn: string;
     available: boolean;
     description: string;
+    issueHistory: IIssueHistory[];
 }

@@ -43,7 +43,7 @@ export default function BooksPage() {
                 </Card>
                 <Card>
                     <CardHeader>{stats.countLost}</CardHeader>
-                    <span>Zgubione książki</span>
+                    <span>Niezwrócone książki</span>
                 </Card>
             </InfoCardsContainer>
         </BooksPageContainer>

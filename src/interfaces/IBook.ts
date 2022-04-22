@@ -9,6 +9,7 @@ export interface IBook {
     genres: IGenre[] | string[];
     available: boolean;
     description: string;
+    issueHistory: IIssueHistory[];
 }
 
 export interface ILanguage {
@@ -29,6 +30,13 @@ export interface IPublisher {
 export interface IGenre {
     id: string;
     name: string;
+}
+
+export interface IIssueHistory {
+    id: string;
+    issueDate: string;
+    returnDate: string;
+    returned: boolean;
 }
 
 /*{

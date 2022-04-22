@@ -65,7 +65,7 @@ export default function HomePage() {
 
     useEffect(() => {
         async function fetchAPI() {
-            const { data } = await api.get(API_ROUTES.GET_ISSUE_ALL);
+            const { data } = await api.get(API_ROUTES.GET_ISSUE_OVERDUES);
             setIssues(data.issues);
         }
 

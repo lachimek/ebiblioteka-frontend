@@ -164,6 +164,7 @@ function BooksAddForm({ edit }: { edit?: Boolean }) {
                         genres: genre,
                         description,
                         available: true,
+                        issueHistory: [],
                     })
                 );
                 console.log({

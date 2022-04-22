@@ -52,7 +52,7 @@ export default function MembersPage() {
                 </Card>
                 <Card>
                     <CardHeader>{stats.bestGroup.group}</CardHeader>
-                    <span>Najlepsza klasa</span>
+                    <span>Najaktywniejsza klasa</span>
                 </Card>
             </InfoCardsContainer>
         </div>

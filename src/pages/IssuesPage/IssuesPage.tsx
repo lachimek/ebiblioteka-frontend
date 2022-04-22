@@ -18,16 +18,19 @@ export default function IssuesPage() {
             </GraphContainer>
             <InfoCardsContainer>
                 <Card>
-                    <CardHeader>189</CardHeader>
-                    <span>Zarejestrowani uczniowie</span>
+                    <CardHeader>30</CardHeader>
+                    <span>Otwarte wypożyczenia</span>
                 </Card>
                 <Card>
                     <CardHeader>18</CardHeader>
-                    <span>Ilość klas w systemie</span>
+                    <span style={{ textAlign: "center" }}>
+                        Wypożyczenia bliskie <br />
+                        przedawnienia
+                    </span>
                 </Card>
                 <Card>
-                    <CardHeader>3b</CardHeader>
-                    <span>Najlepsza klasa</span>
+                    <CardHeader>3</CardHeader>
+                    <span>Wypożyczenia przedawnione</span>
                 </Card>
             </InfoCardsContainer>
         </div>

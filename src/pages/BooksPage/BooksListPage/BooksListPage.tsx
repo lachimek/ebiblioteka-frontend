@@ -67,6 +67,7 @@ export default function BooksListPage() {
                 isbn: book.isbn,
                 available: book.available,
                 description: book.description,
+                issueHistory: book.issueHistory,
             };
         });
 
