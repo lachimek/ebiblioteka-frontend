@@ -1,4 +1,4 @@
-import { IIssueHistory } from "./IBook";
+import { IIssueHistory } from "./IIssueHistory";
 
 export default interface IBooksTableData {
     id: string;

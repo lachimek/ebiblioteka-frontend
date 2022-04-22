@@ -1,21 +1,20 @@
-import IBooksTableData from "interfaces/IBooksTableData";
+import IIssuesTableData from "interfaces/IIssuesTableData";
 import IMember from "interfaces/IMember";
-import IMembersTableData from "interfaces/IMembersTableData";
 import { PaginationButton } from "pages/BooksPage/BooksListPage/BooksListPageStyles";
 import React from "react";
-import { useTable, Column, useSortBy, usePagination } from "react-table";
-import { StyledTable, StyledButton } from "./MembersTableStyles";
+import { useTable, useSortBy, usePagination } from "react-table";
+import { StyledTable, StyledButton } from "./IssuesTableStyles";
 
 function Table({
     columns,
     data,
     detailsFn,
-    editFn,
+    returnFn,
 }: {
     columns: any;
     data: any[];
     detailsFn: Function;
-    editFn: Function;
+    returnFn: Function;
 }) {
     const {
         getTableProps,
@@ -57,22 +56,24 @@ function Table({
                 <tbody {...getTableBodyProps()}>
                     {page.map((row, i) => {
                         prepareRow(row);
+                        const getColorByStatus = () => {
+                            const rowData = row.original as IIssuesTableData;
+
+                            switch (rowData.status) {
+                                case "returned":
+                                    return "#00ff003d";
+                                case "overdue":
+                                    return "#c705053d";
+                                case "near":
+                                    return "#ffa60075";
+                                default:
+                                    return "";
+                            }
+                        };
                         return (
-                            <tr {...row.getRowProps()} style={{ height: "50px" }}>
+                            <tr {...row.getRowProps()} style={{ height: "50px", backgroundColor: getColorByStatus() }}>
                                 {row.cells.map((cell) => {
-                                    if (cell.value === true)
-                                        return (
-                                            <td {...cell.getCellProps()} style={{ textAlign: "center" }}>
-                                                <span style={{ color: "green" }}>Tak</span>
-                                            </td>
-                                        );
-                                    else if (cell.value === false)
-                                        return (
-                                            <td {...cell.getCellProps()} style={{ textAlign: "center" }}>
-                                                <span style={{ color: "red" }}>Nie</span>
-                                            </td>
-                                        );
-                                    else if (cell.column.id === "id" && cell.value !== undefined)
+                                    if (cell.column.id === "id" && cell.value !== undefined)
                                         return (
                                             <td {...cell.getCellProps()} style={{ textAlign: "center" }}>
                                                 <StyledButton
@@ -81,7 +82,9 @@ function Table({
                                                 >
                                                     Szczegóły
                                                 </StyledButton>
-                                                <StyledButton onClick={() => editFn(cell.value)}>Edytuj</StyledButton>
+                                                <StyledButton onClick={() => returnFn(cell.value)}>
+                                                    Rozpocznij zwrot
+                                                </StyledButton>
                                             </td>
                                         );
                                     else return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
@@ -106,14 +109,14 @@ function Table({
     );
 }
 
-function MembersTable({
+function IssuesTable({
     tableData,
     detailsFn,
-    editFn,
+    returnFn,
 }: {
     tableData: IMember[];
     detailsFn: Function;
-    editFn: Function;
+    returnFn: Function;
 }) {
     const columns = React.useMemo(
         () => [
@@ -122,12 +125,8 @@ function MembersTable({
                 accessor: "lp",
             },
             {
-                Header: "Imię",
-                accessor: "firstName",
-            },
-            {
-                Header: "Nazwisko",
-                accessor: "lastName",
+                Header: "Uczeń",
+                accessor: "member",
             },
             {
                 Header: "Telefon",
@@ -138,8 +137,12 @@ function MembersTable({
                 accessor: "groupName",
             },
             {
-                Header: "Ilość wypożyczonych książek",
-                accessor: "issuanceCount",
+                Header: "Data wypożyczenia",
+                accessor: "issueDate",
+            },
+            {
+                Header: "Data zwrotu",
+                accessor: "returnDate",
             },
             {
                 Header: "Akcje",
@@ -149,7 +152,7 @@ function MembersTable({
         []
     );
 
-    return <Table columns={columns} data={tableData} detailsFn={detailsFn} editFn={editFn} />;
+    return <Table columns={columns} data={tableData} detailsFn={detailsFn} returnFn={returnFn} />;
 }
 
-export default MembersTable;
+export default IssuesTable;
