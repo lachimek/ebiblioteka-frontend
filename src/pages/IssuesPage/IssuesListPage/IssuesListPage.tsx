@@ -8,16 +8,8 @@ import { fetchAllIssues, listIssueSelector } from "./IssueListSlice";
 import toast from "react-hot-toast";
 import Multiselect from "multiselect-react-dropdown";
 import { addMemberSelector, fetchGroups } from "pages/MembersPage/MembersAddPage/MembersAddSlice";
-
-function detailsModal(id: string) {
-    // setDetails(members.filter((member) => member.id === id)[0]);
-    // setShowModal(true);
-}
-
-function returnIssue(id: string) {
-    // setDetails(members.filter((member) => member.id === id)[0]);
-    // setShowModal(true);
-}
+import IssueReturnModal from "./IssueReturnModal";
+import IIssuesTableData from "interfaces/IIssuesTableData";
 
 const IssuesListPage = () => {
     const navigate = useNavigate();
@@ -32,6 +24,9 @@ const IssuesListPage = () => {
     const [searchString, setSearchString] = useState<string>("");
     const [searchGroups, setSearchGroups] = useState<string[]>([]);
 
+    const [issue, setIssue] = useState<IIssuesTableData>();
+    const [showModal, setShowModal] = useState<boolean>(false);
+
     useEffect(() => {
         dispatch(fetchAllIssues());
         dispatch(fetchGroups());
@@ -43,6 +38,11 @@ const IssuesListPage = () => {
             navigate("/issues");
         }
     }, [error, navigate]);
+
+    function returnIssue(id: string) {
+        setIssue(issues.find((issue) => issue.id === id));
+        setShowModal(true);
+    }
 
     const formatTableData = () => {
         const tableDataWithLp = issues.map((issue, i) => {
@@ -161,7 +161,7 @@ const IssuesListPage = () => {
     return (
         <div style={{ width: "1300px" }}>
             <SearchContainer>
-                <StyledButton onClick={() => navigate("/members")} style={{ marginRight: "auto" }}>
+                <StyledButton onClick={() => navigate("/issues")} style={{ marginRight: "auto" }}>
                     Powrót
                 </StyledButton>
 
@@ -184,7 +184,12 @@ const IssuesListPage = () => {
                     Skanuj kod książki
                 </StyledButton>
             </SearchContainer>
-            {/* <MemberDetailsModal details={details || null} showModal={showModal} setShowModal={setShowModal} /> */}
+            <IssueReturnModal
+                issue={issue}
+                showModal={showModal}
+                setShowModal={setShowModal}
+                reloadTable={() => dispatch(fetchAllIssues())}
+            />
             {loading ? (
                 <div>Loading...</div>
             ) : tableData ? (

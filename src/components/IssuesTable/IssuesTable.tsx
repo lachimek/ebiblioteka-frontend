@@ -90,9 +90,11 @@ function Table({ columns, data, returnFn }: { columns: any; data: any[]; returnF
                                     if (cell.column.id === "id" && cell.value !== undefined)
                                         return (
                                             <td {...cell.getCellProps()} style={{ textAlign: "center" }}>
-                                                <StyledButton onClick={() => returnFn(cell.value)}>
-                                                    Rozpocznij zwrot
-                                                </StyledButton>
+                                                {(row.original as IIssuesTableData).status !== "returned" && (
+                                                    <StyledButton onClick={() => returnFn(cell.value)}>
+                                                        Rozpocznij zwrot
+                                                    </StyledButton>
+                                                )}
                                             </td>
                                         );
                                     else return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
