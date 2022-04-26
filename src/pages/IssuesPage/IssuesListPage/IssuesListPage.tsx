@@ -6,7 +6,6 @@ import IssuesTable from "components/IssuesTable/IssuesTable";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllIssues, listIssueSelector } from "./IssueListSlice";
 import toast from "react-hot-toast";
-import IIssuesTableData from "interfaces/IIssuesTableData";
 import Multiselect from "multiselect-react-dropdown";
 import { addMemberSelector, fetchGroups } from "pages/MembersPage/MembersAddPage/MembersAddSlice";
 
@@ -54,17 +53,28 @@ const IssuesListPage = () => {
                 phone: issue.member.phone,
                 groupName: issue.member.groupName,
                 issueDate: issue.issueDate.split("T")[0],
-                returnDate: issue.returnDate.split("T")[0],
+                returnDate: issue.returnDate ? issue.returnDate.split("T")[0] : "brak",
+                expectedReturnDate: issue.expectedReturnDate.split("T")[0] || "",
                 status: issue.status,
+                bookId: issue.book.id,
+                isbn: issue.book.isbn,
+                bookTitle: issue.book.title,
             };
         });
-        console.log("format triggered", tableDataWithLp);
         setTableData(tableDataWithLp);
     };
 
     useEffect(() => {
         formatTableData();
     }, [issues]);
+
+    useEffect(() => {
+        if (searchColumn === "findIssueByBookId") {
+            handleSearch();
+            setSearchColumn("");
+            setSearchString("");
+        }
+    }, [searchColumn]);
 
     function handleSearch(clear: boolean = false) {
         if (clear) {
@@ -88,6 +98,8 @@ const IssuesListPage = () => {
                     return row.status === "returned";
                 case "overdue":
                     return row.status === "overdue";
+                case "findIssueByBookId":
+                    return row.bookId === searchString;
                 case "":
                     return tableData;
                 default:
@@ -138,8 +150,16 @@ const IssuesListPage = () => {
         );
     }
 
+    const findIssueByBookId = () => {
+        const id = prompt("Prosze podać id książki (emulator skanera)");
+        if (id) {
+            setSearchString(id);
+            setSearchColumn("findIssueByBookId");
+        }
+    };
+
     return (
-        <div style={{ width: "1200px" }}>
+        <div style={{ width: "1300px" }}>
             <SearchContainer>
                 <StyledButton onClick={() => navigate("/members")} style={{ marginRight: "auto" }}>
                     Powrót
@@ -160,13 +180,16 @@ const IssuesListPage = () => {
                 <StyledButton onClick={() => handleSearch(true)} style={{ marginLeft: "8px" }}>
                     Wyczyść
                 </StyledButton>
+                <StyledButton onClick={() => findIssueByBookId()} style={{ marginLeft: "8px" }}>
+                    Skanuj kod książki
+                </StyledButton>
             </SearchContainer>
             {/* <MemberDetailsModal details={details || null} showModal={showModal} setShowModal={setShowModal} /> */}
             {loading ? (
                 <div>Loading...</div>
             ) : tableData ? (
                 <div>
-                    <IssuesTable tableData={tableData} detailsFn={detailsModal} returnFn={returnIssue} />
+                    <IssuesTable tableData={tableData} returnFn={returnIssue} />
                 </div>
             ) : (
                 <div>Brak danych</div>

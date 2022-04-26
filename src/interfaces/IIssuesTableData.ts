@@ -2,6 +2,7 @@ export default interface IIssuesTableData {
     id: string;
     issueDate: string;
     returnDate: string;
+    expectedReturnDate: string;
     status: "good" | "near" | "returned" | "overdue";
     book: {
         id: string;

@@ -24,6 +24,7 @@ interface IssuesInfo {
     id: string;
     issueDate: string;
     returnDate: string;
+    expectedReturnDate: string;
     overdue: boolean;
     book: Book;
     member: Member;
@@ -149,7 +150,8 @@ export default function HomePage() {
                                     Tytuł: {issue.book.title} ISBN: {issue.book.isbn}
                                 </span>
                                 <span>
-                                    Wypożyczenie: {issue.issueDate.split("T")[0]} do {issue.returnDate.split("T")[0]}
+                                    Wypożyczenie: {issue.issueDate ? issue.issueDate.split("T")[0] : "brak"} do{" "}
+                                    {issue.expectedReturnDate ? issue.expectedReturnDate.split("T")[0] : "brak"}
                                 </span>
                             </Card>
                         ))}

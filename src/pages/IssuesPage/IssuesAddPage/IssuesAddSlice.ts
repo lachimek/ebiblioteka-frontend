@@ -45,15 +45,15 @@ export const addIssue = (issueData: IIssuesFormData): AppThunkAddIssue => {
                 bookId: issueData.bookId,
                 userId: issueData.memberId,
                 issueDate: issueData.issueStart,
-                returnDate: issueData.issueEnd,
+                expectedReturnDate: issueData.issueEnd,
             });
             dispatch(setIssueId(data.issue.id));
             dispatch(setLoading(false));
             console.log(data);
         } catch (err: Error | AxiosError | any) {
             console.log(err);
-            dispatch(setLoading(false));
             dispatch(setError("Issue not added"));
+            dispatch(setLoading(false));
         }
     };
 };

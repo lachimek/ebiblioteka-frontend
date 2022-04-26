@@ -3,19 +3,33 @@ import IMember from "interfaces/IMember";
 import { PaginationButton } from "pages/BooksPage/BooksListPage/BooksListPageStyles";
 import React from "react";
 import { useTable, useSortBy, usePagination } from "react-table";
+import styled from "styled-components";
 import { StyledTable, StyledButton } from "./IssuesTableStyles";
 
-function Table({
-    columns,
-    data,
-    detailsFn,
-    returnFn,
-}: {
-    columns: any;
-    data: any[];
-    detailsFn: Function;
-    returnFn: Function;
-}) {
+const Legend = styled.div`
+    display: flex;
+    margin-top: 20px;
+`;
+
+const LegendItem = styled.div<{ backgroundColor: string }>`
+    display: flex;
+    &:before {
+        content: "";
+        display: inline-block;
+        height: 12px;
+        width: 12px;
+        background-color: ${(props) => props.backgroundColor};
+        border-radius: 2px;
+        margin-right: 4px;
+        border: 1px solid black;
+        justify-content: baseline;
+    }
+
+    margin-right: 15px;
+    font-size: 12px;
+`;
+
+function Table({ columns, data, returnFn }: { columns: any; data: any[]; returnFn: Function }) {
     const {
         getTableProps,
         getTableBodyProps,
@@ -76,12 +90,6 @@ function Table({
                                     if (cell.column.id === "id" && cell.value !== undefined)
                                         return (
                                             <td {...cell.getCellProps()} style={{ textAlign: "center" }}>
-                                                <StyledButton
-                                                    onClick={() => detailsFn(cell.value)}
-                                                    style={{ marginRight: "8px" }}
-                                                >
-                                                    Szczegóły
-                                                </StyledButton>
                                                 <StyledButton onClick={() => returnFn(cell.value)}>
                                                     Rozpocznij zwrot
                                                 </StyledButton>
@@ -105,19 +113,17 @@ function Table({
                     &gt;
                 </PaginationButton>
             </div>
+            <Legend>
+                <LegendItem backgroundColor="#c705053d">Przedawnione</LegendItem>
+                <LegendItem backgroundColor="#00ff003d">Oddane</LegendItem>
+                <LegendItem backgroundColor="#ffa60075">2 dni do przedawnienia lub mniej</LegendItem>
+                <LegendItem backgroundColor="#fff">Więcej niż 2 dni do przedawnienia</LegendItem>
+            </Legend>
         </>
     );
 }
 
-function IssuesTable({
-    tableData,
-    detailsFn,
-    returnFn,
-}: {
-    tableData: IMember[];
-    detailsFn: Function;
-    returnFn: Function;
-}) {
+function IssuesTable({ tableData, returnFn }: { tableData: IMember[]; returnFn: Function }) {
     const columns = React.useMemo(
         () => [
             {
@@ -141,8 +147,20 @@ function IssuesTable({
                 accessor: "issueDate",
             },
             {
+                Header: "Przewidywany zwrot",
+                accessor: "expectedReturnDate",
+            },
+            {
                 Header: "Data zwrotu",
                 accessor: "returnDate",
+            },
+            {
+                Header: "Tytuł książki",
+                accessor: "bookTitle",
+            },
+            {
+                Header: "ISBN",
+                accessor: "isbn",
             },
             {
                 Header: "Akcje",
@@ -152,7 +170,7 @@ function IssuesTable({
         []
     );
 
-    return <Table columns={columns} data={tableData} detailsFn={detailsFn} returnFn={returnFn} />;
+    return <Table columns={columns} data={tableData} returnFn={returnFn} />;
 }
 
 export default IssuesTable;

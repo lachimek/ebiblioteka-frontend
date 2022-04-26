@@ -11,7 +11,7 @@ export default function IssuesPage() {
         <div style={{ width: "80%" }}>
             <ButtonContainer>
                 <Button onClick={() => navigate("add")}>Nowe wypożyczenie</Button>
-                <Button onClick={() => navigate("list")}>Historia wypożyczeń</Button>
+                <Button onClick={() => navigate("list")}>Lista wypożyczeń</Button>
             </ButtonContainer>
             <GraphContainer>
                 <DailyIssuesGraph />

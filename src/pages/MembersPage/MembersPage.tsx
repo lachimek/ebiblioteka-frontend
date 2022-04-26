@@ -26,7 +26,6 @@ export default function MembersPage() {
         async function fetchAPI() {
             const { data } = await api.get(API_ROUTES.GET_MEMBERS_PAGE_STATS);
             setStats(data.info);
-            console.log(data.info);
         }
 
         fetchAPI();
