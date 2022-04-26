@@ -43,3 +43,26 @@ export const StyledButton = styled.button`
         background-color: #ff9e0dcf;
     }
 `;
+
+export const Legend = styled.div`
+    display: flex;
+    margin-top: 20px;
+`;
+
+export const LegendItem = styled.div<{ backgroundColor: string }>`
+    display: flex;
+    &:before {
+        content: "";
+        display: inline-block;
+        height: 12px;
+        width: 12px;
+        background-color: ${(props) => props.backgroundColor};
+        border-radius: 2px;
+        margin-right: 4px;
+        border: 1px solid black;
+        justify-content: baseline;
+    }
+
+    margin-right: 15px;
+    font-size: 12px;
+`;

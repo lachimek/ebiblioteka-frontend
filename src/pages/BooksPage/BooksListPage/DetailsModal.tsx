@@ -64,7 +64,7 @@ function DetailsModal({
 }) {
     const getReturnDate = (details: IBook) => {
         const lastIssue = details.issueHistory.filter((issue) => !issue.returned)[0];
-        if (lastIssue) return lastIssue.returnDate.split("T")[0];
+        if (lastIssue) return lastIssue.expectedReturnDate.split("T")[0];
         else return false;
     };
     return showModal && details ? (

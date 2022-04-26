@@ -2,7 +2,7 @@ import IBooksTableData from "interfaces/IBooksTableData";
 import { PaginationButton } from "pages/BooksPage/BooksListPage/BooksListPageStyles";
 import React from "react";
 import { useTable, Column, useSortBy, usePagination } from "react-table";
-import { StyledTable, StyledButton } from "./BooksTableStyles";
+import { StyledTable, StyledButton, Legend, LegendItem } from "./BooksTableStyles";
 
 function Table({
     columns,
@@ -57,22 +57,15 @@ function Table({
                 <tbody {...getTableBodyProps()}>
                     {page.map((row, i) => {
                         prepareRow(row);
+                        const getColorByStatus = () => {
+                            const rowData = row.original as IBooksTableData;
+
+                            return rowData.available ? "#fff" : "#c705053d";
+                        };
                         return (
-                            <tr {...row.getRowProps()} style={{ height: "50px" }}>
+                            <tr {...row.getRowProps()} style={{ height: "50px", backgroundColor: getColorByStatus() }}>
                                 {row.cells.map((cell) => {
-                                    if (cell.value === true)
-                                        return (
-                                            <td {...cell.getCellProps()} style={{ textAlign: "center" }}>
-                                                <span style={{ color: "green" }}>Tak</span>
-                                            </td>
-                                        );
-                                    else if (cell.value === false)
-                                        return (
-                                            <td {...cell.getCellProps()} style={{ textAlign: "center" }}>
-                                                <span style={{ color: "red" }}>Nie</span>
-                                            </td>
-                                        );
-                                    else if (cell.column.id === "id" && cell.value !== undefined)
+                                    if (cell.column.id === "id" && cell.value !== undefined)
                                         return (
                                             <td {...cell.getCellProps()} style={{ textAlign: "center" }}>
                                                 <StyledButton
@@ -108,6 +101,10 @@ function Table({
                     &gt;
                 </PaginationButton>
             </div>
+            <Legend>
+                <LegendItem backgroundColor="#c705053d">Niedostępne</LegendItem>
+                <LegendItem backgroundColor="#fff">Dostępne</LegendItem>
+            </Legend>
         </>
     );
 }
@@ -144,10 +141,6 @@ function BooksTable({
             {
                 Header: "Gatunek",
                 accessor: "genre",
-            },
-            {
-                Header: "Dostępne?",
-                accessor: "available",
             },
             {
                 Header: "Akcje",

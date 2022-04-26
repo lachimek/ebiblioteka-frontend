@@ -1,3 +1,4 @@
+import { Legend, LegendItem } from "components/BooksTable/BooksTableStyles";
 import IIssuesTableData from "interfaces/IIssuesTableData";
 import IMember from "interfaces/IMember";
 import { PaginationButton } from "pages/BooksPage/BooksListPage/BooksListPageStyles";
@@ -5,29 +6,6 @@ import React from "react";
 import { useTable, useSortBy, usePagination } from "react-table";
 import styled from "styled-components";
 import { StyledTable, StyledButton } from "./IssuesTableStyles";
-
-const Legend = styled.div`
-    display: flex;
-    margin-top: 20px;
-`;
-
-const LegendItem = styled.div<{ backgroundColor: string }>`
-    display: flex;
-    &:before {
-        content: "";
-        display: inline-block;
-        height: 12px;
-        width: 12px;
-        background-color: ${(props) => props.backgroundColor};
-        border-radius: 2px;
-        margin-right: 4px;
-        border: 1px solid black;
-        justify-content: baseline;
-    }
-
-    margin-right: 15px;
-    font-size: 12px;
-`;
 
 function Table({ columns, data, returnFn }: { columns: any; data: any[]; returnFn: Function }) {
     const {
@@ -72,6 +50,10 @@ function Table({ columns, data, returnFn }: { columns: any; data: any[]; returnF
                         prepareRow(row);
                         const getColorByStatus = () => {
                             const rowData = row.original as IIssuesTableData;
+
+                            if (rowData.status === "returned" && rowData.returnDate > rowData.expectedReturnDate) {
+                                return "#38057a3c";
+                            }
 
                             switch (rowData.status) {
                                 case "returned":
@@ -118,6 +100,7 @@ function Table({ columns, data, returnFn }: { columns: any; data: any[]; returnF
             <Legend>
                 <LegendItem backgroundColor="#c705053d">Przedawnione</LegendItem>
                 <LegendItem backgroundColor="#00ff003d">Zwrócone</LegendItem>
+                <LegendItem backgroundColor="#38057a3c">Zwrócone po przedawnieniu</LegendItem>
                 <LegendItem backgroundColor="#ffa60075">2 dni do przedawnienia lub mniej</LegendItem>
                 <LegendItem backgroundColor="#fff">Więcej niż 2 dni do przedawnienia</LegendItem>
             </Legend>
