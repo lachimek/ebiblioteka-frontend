@@ -117,7 +117,7 @@ function Table({ columns, data, returnFn }: { columns: any; data: any[]; returnF
             </div>
             <Legend>
                 <LegendItem backgroundColor="#c705053d">Przedawnione</LegendItem>
-                <LegendItem backgroundColor="#00ff003d">Oddane</LegendItem>
+                <LegendItem backgroundColor="#00ff003d">Zwrócone</LegendItem>
                 <LegendItem backgroundColor="#ffa60075">2 dni do przedawnienia lub mniej</LegendItem>
                 <LegendItem backgroundColor="#fff">Więcej niż 2 dni do przedawnienia</LegendItem>
             </Legend>
