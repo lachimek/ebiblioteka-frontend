@@ -6,6 +6,7 @@ import listMemberReducer, { IListMemberState } from "pages/MembersPage/MembersLi
 import addMemberReducer, { IAddMemberState } from "pages/MembersPage/MembersAddPage/MembersAddSlice";
 import addIssueReducer, { IAddIssueState } from "pages/IssuesPage/IssuesAddPage/IssuesAddSlice";
 import listIssueReducer, { IListIssueState } from "pages/IssuesPage/IssuesListPage/IssueListSlice";
+import homePageReducer, { IHomePageState } from "pages/HomePage/HomePageSlice";
 
 export const store = configureStore({
     reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
         addMemberStore: addMemberReducer,
         addIssueStore: addIssueReducer,
         listIssueStore: listIssueReducer,
+        homePageStore: homePageReducer,
     },
     devTools: true,
 });
@@ -32,3 +34,5 @@ export type AppThunkListMembers = ThunkAction<void, IListMemberState, unknown, A
 
 export type AppThunkAddIssue = ThunkAction<void, IAddIssueState, unknown, Action<string>>;
 export type AppThunkListIssue = ThunkAction<void, IListIssueState, unknown, Action<string>>;
+
+export type AppThunkHomePage = ThunkAction<void, IHomePageState, unknown, Action<string>>;

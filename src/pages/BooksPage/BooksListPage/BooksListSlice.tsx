@@ -80,7 +80,7 @@ export const fetchAllGenres = (): AppThunkListBook => {
                 )
             );
         } catch (err: Error | AxiosError | any) {
-            console.clear();
+            //console.clear();
             console.log(err.response.data);
             dispatch(setError(err.response.data.error));
             dispatch(setLoading(false));
