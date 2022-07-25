@@ -6,24 +6,27 @@ import "./index.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 
-import LoginPage from "./pages/LoginPage/LoginPage";
 import { SiteToaster } from "./components/SiteToaster/SiteToaster";
+//store and api injection
+import { store } from "./store";
+import { injectStore } from "api";
+//app wrapper
+import App from "./components/App/App";
+//page imports
+import LoginPage from "./pages/LoginPage/LoginPage";
 import HomePage from "./pages/HomePage/HomePage";
 import BooksPage from "./pages/BooksPage/BooksPage";
 import MembersPage from "./pages/MembersPage/MembersPage";
-import App from "./components/App/App";
-import RequestsPage from "./pages/RequestsPage/RequestsPage";
 import ReturnsPage from "./pages/ReturnsPage/ReturnsPage";
 import IssuesPage from "./pages/IssuesPage/IssuesPage";
 import StatsPage from "./pages/StatsPage/StatsPage";
-import { store } from "./store";
 import BooksAddPage from "./pages/BooksPage/BooksAddPage/BooksAddPage";
 import BooksListPage from "./pages/BooksPage/BooksListPage/BooksListPage";
-import { injectStore } from "api";
 import MembersAddPage from "pages/MembersPage/MembersAddPage/MembersAddPage";
 import MembersListPage from "pages/MembersPage/MembersListPage/MembersListPage";
 import IssuesAddPage from "pages/IssuesPage/IssuesAddPage/IssuesAddPage";
 import IssuesListPage from "pages/IssuesPage/IssuesListPage/IssuesListPage";
+import ReservationsPage from "./pages/ReservationsPage/ReservationsPage";
 
 injectStore(store);
 
@@ -48,7 +51,7 @@ ReactDOM.render(
                         <Route path="/issues/add" element={<IssuesAddPage />} />
                         <Route path="/issues/list" element={<IssuesListPage />} />
                         <Route path="/returns" element={<ReturnsPage />} />
-                        <Route path="/requests" element={<RequestsPage />} />
+                        <Route path="/reservations" element={<ReservationsPage />} />
                         <Route path="/stats" element={<StatsPage />} />
                     </Routes>
                 </App>

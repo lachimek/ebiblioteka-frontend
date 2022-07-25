@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { tableSearchMultiple } from "utils/TableSearchMultiple";
 import { Paginize } from "utils/Paginize";
 import { PaginationButton, SearchContainer, SearchInput, SearchSelect } from "./BooksListPageStyles";
-import { fetchAllBooks, listBookSelector, deleteBook, fetchAllGenres } from "./BooksListSlice";
+import { fetchAllBooks, listBookSelector, deleteBook, fetchAllGenres, IBookWithReserved } from "./BooksListSlice";
 import DeleteModal from "./DeleteModal";
 import DetailsModal from "./DetailsModal";
 
@@ -20,7 +20,7 @@ export default function BooksListPage() {
     const navigate = useNavigate();
     const [paginizedData, setPaginizedData] = useState<Array<any>>([]);
 
-    const [details, setDetails] = useState<IBook>();
+    const [details, setDetails] = useState<IBookWithReserved>();
     const [showModal, setShowModal] = useState<boolean>(false);
 
     const [deleteId, setDeleteId] = useState<string>("");
@@ -66,6 +66,7 @@ export default function BooksListPage() {
                 genre: curGenres,
                 isbn: book.isbn,
                 available: book.available,
+                reserved: book.reserved,
                 description: book.description,
                 issueHistory: book.issueHistory,
             };

@@ -1,6 +1,7 @@
-import { IAuthor, IBook, IGenre, ILanguage, IPublisher } from "interfaces/IBook";
+import { IAuthor, IGenre, ILanguage, IPublisher } from "interfaces/IBook";
 import toast from "react-hot-toast";
 import styled from "styled-components";
+import { IBookWithReserved } from "./BooksListSlice";
 
 const ModalBlur = styled.div`
     position: absolute;
@@ -58,11 +59,11 @@ function DetailsModal({
     showModal,
     setShowModal,
 }: {
-    details: IBook | null;
+    details: IBookWithReserved | null;
     showModal: boolean;
     setShowModal: Function;
 }) {
-    const getReturnDate = (details: IBook) => {
+    const getReturnDate = (details: IBookWithReserved) => {
         const lastIssue = details.issueHistory.filter((issue) => !issue.returned)[0];
         if (lastIssue) return lastIssue.expectedReturnDate.split("T")[0];
         else return false;

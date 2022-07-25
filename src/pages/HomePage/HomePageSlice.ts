@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppThunkAddIssue, AppThunkHomePage } from "store";
+import { AppThunkHomePage } from "store";
 import { api, API_ROUTES } from "api";
 
 interface Book {
@@ -27,16 +27,25 @@ interface IssuesInfo {
     member: Member;
 }
 
-interface Reservations {
+export enum ReservationStatus {
+    COMPLETED = "completed",
+    READY = "ready",
+    WAITING = "waiting",
+    BEGIN = "begin",
+    CANCELLED = "cancelled",
+}
+
+export interface Reservation {
     id: string;
     reservationDate: string;
     book: Book & { returnDate: string | null };
     member: Member;
+    status: ReservationStatus;
 }
 
 export interface IHomePageState {
     issues: IssuesInfo[] | null;
-    reservations: Reservations[] | null;
+    reservations: Reservation[] | null;
     loading: boolean;
     error: string | null;
 }
@@ -60,7 +69,7 @@ const homePageSlice = createSlice({
             state.issues = payload;
         },
 
-        setReservations: (state, { payload }: PayloadAction<Reservations[]>) => {
+        setReservations: (state, { payload }: PayloadAction<Reservation[]>) => {
             state.reservations = payload;
         },
 
@@ -74,7 +83,6 @@ const homePageSlice = createSlice({
 
 export const fetchIssuesAndReservations = (): AppThunkHomePage => {
     return async (dispatch) => {
-        dispatch(setLoading(true));
         dispatch(setError(""));
         try {
             const issues = await api.get(API_ROUTES.GET_ISSUE_OVERDUES);
@@ -87,6 +95,22 @@ export const fetchIssuesAndReservations = (): AppThunkHomePage => {
         } catch (err: Error | any) {
             console.error(err);
             dispatch(setError("Error fetching issues and reservations: " + err.message));
+        }
+    };
+};
+
+export const confirmReservation = (reservationId: Reservation["id"]): AppThunkHomePage => {
+    return async (dispatch) => {
+        dispatch(setLoading(true));
+        dispatch(setError(""));
+        try {
+            await api.post(API_ROUTES.CONFIRM_RESERVATION, {
+                reservationId: reservationId,
+            });
+            dispatch(setLoading(false));
+        } catch (err: Error | any) {
+            console.error(err);
+            dispatch(setError("Error confirming reservation: " + err.message));
             dispatch(setLoading(false));
         }
     };

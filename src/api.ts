@@ -65,6 +65,7 @@ export enum API_ROUTES {
     GET_RESERVATION_ONE = "/v1/reservation",
     GET_RESERVATION_ALL = "/v1/reservation/all",
     GET_RESERVATION_BY_USER_ID = "/v1/reservation/ofuser",
+    CONFIRM_RESERVATION = "/v1/reservation/confirm",
 
     //stats routes
     GET_BOOKS_PAGE_STATS = "/v1/stats/books",

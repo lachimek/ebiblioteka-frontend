@@ -8,6 +8,7 @@ export default interface IBooksTableData {
     genre: string[];
     isbn: string;
     available: boolean;
+    reserved: boolean;
     description: string;
     issueHistory: IIssueHistory[];
 }

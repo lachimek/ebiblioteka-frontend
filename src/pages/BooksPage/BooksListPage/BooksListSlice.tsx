@@ -4,8 +4,12 @@ import { api, API_ROUTES } from "api";
 import { AxiosError } from "axios";
 import { IBook, IGenre } from "interfaces/IBook";
 
+export interface IBookWithReserved extends IBook {
+    reserved: boolean;
+}
+
 export interface IListBookState {
-    books: IBook[];
+    books: IBookWithReserved[];
     genres: string[];
     loading: boolean;
     loadingDelete: boolean;
@@ -32,7 +36,7 @@ const listBookSlice = createSlice({
             state.loadingDelete = payload;
         },
 
-        setBooks: (state, { payload }: PayloadAction<IBook[]>) => {
+        setBooks: (state, { payload }: PayloadAction<IBookWithReserved[]>) => {
             state.books = payload;
             state.error = null;
         },

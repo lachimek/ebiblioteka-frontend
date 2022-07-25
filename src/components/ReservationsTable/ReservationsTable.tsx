@@ -1,20 +1,36 @@
-import IBooksTableData from "interfaces/IBooksTableData";
 import { PaginationButton } from "pages/BooksPage/BooksListPage/BooksListPageStyles";
+import { Reservation } from "pages/HomePage/HomePageSlice";
+import { ReservationsTableData } from "pages/ReservationsPage/ReservationsPage";
 import React from "react";
 import { useTable, Column, useSortBy, usePagination } from "react-table";
-import { StyledTable, StyledButton, Legend, LegendItem } from "./BooksTableStyles";
+import { StyledButton, StyledTable } from "./ReservationsTableStyles";
+
+const convertStatus = (status: Reservation["status"]): { text: string; color: string } => {
+    switch (status) {
+        case "completed":
+            return { text: "Zakończona", color: "#000" };
+        case "cancelled":
+            return { text: "Anulowana", color: "#b30808" };
+        case "begin":
+            return { text: "Przyjęta", color: "#000" };
+        case "waiting":
+            return { text: "Oczekuje na zwrot", color: "#dd9000" };
+        case "ready":
+            return { text: "Oczekuje na odbiór", color: "#35aa18" };
+        default:
+            return { text: "", color: "" };
+    }
+};
 
 function Table({
     columns,
     data,
     detailsFn,
-    deleteFn,
     editFn,
 }: {
     columns: any;
     data: any[];
     detailsFn: Function;
-    deleteFn: Function;
     editFn: Function;
 }) {
     const {
@@ -57,17 +73,29 @@ function Table({
                 <tbody {...getTableBodyProps()}>
                     {page.map((row, i) => {
                         prepareRow(row);
-                        const getColorByStatus = () => {
-                            const rowData = row.original as IBooksTableData;
-
-                            if (rowData.reserved) return "#0073d13b";
-
-                            return rowData.available ? "#fff" : "#c705053d";
-                        };
                         return (
-                            <tr {...row.getRowProps()} style={{ height: "50px", backgroundColor: getColorByStatus() }}>
+                            <tr {...row.getRowProps()} style={{ height: "50px" }}>
                                 {row.cells.map((cell) => {
-                                    if (cell.column.id === "id" && cell.value !== undefined)
+                                    if (cell.value === true)
+                                        return (
+                                            <td {...cell.getCellProps()} style={{ textAlign: "center" }}>
+                                                <span style={{ color: "green" }}>Tak</span>
+                                            </td>
+                                        );
+                                    else if (cell.value === false)
+                                        return (
+                                            <td {...cell.getCellProps()} style={{ textAlign: "center" }}>
+                                                <span style={{ color: "red" }}>Nie</span>
+                                            </td>
+                                        );
+                                    else if (cell.column.id === "status") {
+                                        const { text, color } = convertStatus(cell.value);
+                                        return (
+                                            <td {...cell.getCellProps()} style={{ textAlign: "center" }}>
+                                                <span style={{ color: color }}>{text}</span>
+                                            </td>
+                                        );
+                                    } else if (cell.column.id === "id" && cell.value !== undefined)
                                         return (
                                             <td {...cell.getCellProps()} style={{ textAlign: "center" }}>
                                                 <StyledButton
@@ -76,13 +104,7 @@ function Table({
                                                 >
                                                     Szczegóły
                                                 </StyledButton>
-                                                <StyledButton
-                                                    onClick={() => editFn(cell.value)}
-                                                    style={{ marginRight: "8px" }}
-                                                >
-                                                    Edytuj
-                                                </StyledButton>
-                                                <StyledButton onClick={() => deleteFn(cell.value)}>Usuń</StyledButton>
+                                                <StyledButton onClick={() => editFn(cell.value)}>Wypożycz</StyledButton>
                                             </td>
                                         );
                                     else return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
@@ -103,24 +125,17 @@ function Table({
                     &gt;
                 </PaginationButton>
             </div>
-            <Legend>
-                <LegendItem backgroundColor="#0073d13b">Zarezerwowana</LegendItem>
-                <LegendItem backgroundColor="#c705053d">Niedostępne</LegendItem>
-                <LegendItem backgroundColor="#fff">Dostępne</LegendItem>
-            </Legend>
         </>
     );
 }
 
-function BooksTable({
+function ReservationsTable({
     tableData,
     detailsFn,
-    deleteFn,
     editFn,
 }: {
-    tableData: IBooksTableData[];
+    tableData: ReservationsTableData[];
     detailsFn: Function;
-    deleteFn: Function;
     editFn: Function;
 }) {
     const columns = React.useMemo(
@@ -130,20 +145,28 @@ function BooksTable({
                 accessor: "lp",
             },
             {
+                Header: "Imię",
+                accessor: "firstName",
+            },
+            {
+                Header: "Nazwisko",
+                accessor: "lastName",
+            },
+            {
                 Header: "ISBN",
                 accessor: "isbn",
             },
             {
-                Header: "Tytuł",
-                accessor: "title",
+                Header: "Data rezerwacji",
+                accessor: "reservationDate",
             },
             {
-                Header: "Autor",
-                accessor: "author",
+                Header: "Dostępna?",
+                accessor: "available",
             },
             {
-                Header: "Gatunek",
-                accessor: "genre",
+                Header: "Status",
+                accessor: "status",
             },
             {
                 Header: "Akcje",
@@ -153,7 +176,7 @@ function BooksTable({
         []
     );
 
-    return <Table columns={columns} data={tableData} detailsFn={detailsFn} deleteFn={deleteFn} editFn={editFn} />;
+    return <Table columns={columns} data={tableData} detailsFn={detailsFn} editFn={editFn} />;
 }
 
-export default BooksTable;
+export default ReservationsTable;

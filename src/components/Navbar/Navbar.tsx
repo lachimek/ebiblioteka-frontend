@@ -59,9 +59,9 @@ const Navbar = React.memo(function Navbar() {
                     </NavLink>
                 </NavItem>
                 <NavItem>
-                    <RequestsIcon {...iconProps("requests")} fill={activeFill("requests")} />
-                    <NavLink to={"/requests"} active={isActive("requests")}>
-                        Zamówienia
+                    <RequestsIcon {...iconProps("reservations")} fill={activeFill("reservations")} />
+                    <NavLink to={"/reservations"} active={isActive("reservations")}>
+                        Rezerwacje
                     </NavLink>
                 </NavItem>
                 <NavItem>

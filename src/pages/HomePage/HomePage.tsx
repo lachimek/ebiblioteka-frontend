@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { fetchIssuesAndReservations, homePageSelector } from "./HomePageSlice";
+import { confirmReservation, fetchIssuesAndReservations, homePageSelector } from "./HomePageSlice";
 
 const HomePageContainer = styled.div`
     height: 80%;
@@ -73,7 +73,7 @@ export default function HomePage() {
     }, [dispatch]);
 
     const handleReservation = (reservationId: string) => {
-        console.log(reservationId);
+        dispatch(confirmReservation(reservationId));
     };
 
     return (
@@ -111,36 +111,43 @@ export default function HomePage() {
                 <span style={{ fontSize: "24px", fontWeight: "bold", padding: "0.5em" }}>Rezerwacje książek</span>
                 <CardsContainer>
                     {reservations &&
-                        reservations.map((reservation) => (
-                            <Card key={reservation.id}>
-                                <CardLeft>
-                                    <span>
-                                        Uczeń: {reservation.member.firstName} {reservation.member.lastName}{" "}
-                                        {reservation.member.groupName}
-                                    </span>
-                                    <span style={{ marginTop: "5px" }}>
-                                        Telefon kontaktowy: {reservation.member.phone}
-                                    </span>
-                                    <span style={{ marginTop: "5px" }}>Tytuł: {reservation.book.title}</span>
-                                    <span style={{ marginTop: "5px" }}>ISBN: {reservation.book.isbn}</span>
-                                    <span style={{ marginTop: "5px", marginBottom: "5px" }}>
-                                        Data rezerwacji: {reservation.reservationDate}
-                                    </span>
-                                    {reservation.book.available ? (
-                                        <span style={{ color: "#23b100" }}>Książka dostępna</span>
-                                    ) : (
-                                        <span style={{ color: "#ff00007b" }}>
-                                            Książka wypożyczona do {reservation.book.returnDate}
-                                        </span>
-                                    )}
-                                </CardLeft>
-                                <CardRight>
-                                    <Button onClick={() => handleReservation(reservation.id)}>
-                                        Potwierdź rezerwacje
-                                    </Button>
-                                </CardRight>
-                            </Card>
-                        ))}
+                        reservations.map((reservation) => {
+                            if (reservation.status === "begin") {
+                                return (
+                                    <Card key={reservation.id}>
+                                        <CardLeft>
+                                            <span>
+                                                Uczeń: {reservation.member.firstName} {reservation.member.lastName}{" "}
+                                                {reservation.member.groupName}
+                                            </span>
+                                            <span style={{ marginTop: "5px" }}>
+                                                Telefon kontaktowy: {reservation.member.phone}
+                                            </span>
+                                            <span style={{ marginTop: "5px" }}>Tytuł: {reservation.book.title}</span>
+                                            <span style={{ marginTop: "5px" }}>ISBN: {reservation.book.isbn}</span>
+                                            <span style={{ marginTop: "5px" }}>Status rezerwacji: Przyjęta</span>
+                                            <span style={{ marginTop: "5px", marginBottom: "5px" }}>
+                                                Data rezerwacji: {reservation.reservationDate}
+                                            </span>
+                                            {reservation.book.available ? (
+                                                <span style={{ color: "#23b100" }}>Książka dostępna</span>
+                                            ) : (
+                                                <span style={{ color: "#ff00007b" }}>
+                                                    Książka wypożyczona do {reservation.book.returnDate}
+                                                </span>
+                                            )}
+                                        </CardLeft>
+                                        <CardRight>
+                                            <Button onClick={() => handleReservation(reservation.id)}>
+                                                Potwierdź rezerwacje
+                                            </Button>
+                                        </CardRight>
+                                    </Card>
+                                );
+                            } else {
+                                return null;
+                            }
+                        })}
                 </CardsContainer>
             </div>
         </HomePageContainer>
